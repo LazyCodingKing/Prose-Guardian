@@ -1,0 +1,316 @@
+<div class="prose-guardian-settings">
+    <div class="inline-drawer">
+        <div class="inline-drawer-toggle inline-drawer-header">
+            <b>🛡️ Prose Guardian</b>
+            <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+        </div>
+        <div class="inline-drawer-content">
+
+            <!-- Fast Mode -->
+            <h4>⚡ Fast Mode (Instant Regex Cleanup)</h4>
+            <label class="checkbox_label" for="asf_fast_mode">
+                <input type="checkbox" id="asf_fast_mode" />
+                <span>Enable instant slop cleanup</span>
+            </label>
+            <small>Uses regex to instantly replace common AI clichés with better alternatives</small>
+
+            <hr>
+
+            <!-- Quality Mode -->
+            <h4>🎨 Quality Mode (AI Rewriting)</h4>
+            <label class="checkbox_label" for="asf_quality_mode">
+                <input type="checkbox" id="asf_quality_mode" />
+                <span>Enable AI deep polish</span>
+            </label>
+
+            <div class="flex-container">
+                <label for="asf_quality_interval">Run every</label>
+                <input type="number" id="asf_quality_interval" class="text_pole" min="1" max="100" value="5" />
+                <span>messages</span>
+            </div>
+
+            <label class="checkbox_label" for="asf_quality_manual">
+                <input type="checkbox" id="asf_quality_manual" />
+                <span>Manual trigger only</span>
+            </label>
+
+            <div style="margin: 15px 0;">
+                <label for="asf_connection_profile">Use separate API/Model for Quality Mode:</label>
+                <select id="asf_connection_profile" class="text_pole" style="width: 100%;">
+                    <option value="">Use main chat connection</option>
+                </select>
+                <small>Optional: Use a cheaper/faster API for slop fixing (e.g., Gemini Flash)</small>
+            </div>
+
+            <hr>
+
+            <!-- Constraint Rules -->
+            <h4>📏 Writing Constraints</h4>
+
+            <div class="flex-container alignitemsflexstart">
+                <label for="asf_min_words">Word Count:</label>
+                <div class="flex-container flexFlowColumn flexNoGap">
+                    <div class="flex-container">
+                        <span>Min:</span>
+                        <input type="number" id="asf_min_words" class="text_pole" min="0" value="50" />
+                    </div>
+                    <div class="flex-container">
+                        <span>Max:</span>
+                        <input type="number" id="asf_max_words" class="text_pole" min="0" value="500" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-container alignitemsflexstart">
+                <label for="asf_min_paragraphs">Paragraphs:</label>
+                <div class="flex-container flexFlowColumn flexNoGap">
+                    <div class="flex-container">
+                        <span>Min:</span>
+                        <input type="number" id="asf_min_paragraphs" class="text_pole" min="0" value="1" />
+                    </div>
+                    <div class="flex-container">
+                        <span>Max:</span>
+                        <input type="number" id="asf_max_paragraphs" class="text_pole" min="0" value="10" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-container alignitemsflexstart">
+                <label for="asf_min_dialogues">Dialogues:</label>
+                <div class="flex-container flexFlowColumn flexNoGap">
+                    <div class="flex-container">
+                        <span>Min:</span>
+                        <input type="number" id="asf_min_dialogues" class="text_pole" min="0" value="0" />
+                    </div>
+                    <div class="flex-container">
+                        <span>Max:</span>
+                        <input type="number" id="asf_max_dialogues" class="text_pole" min="0" value="999" />
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- Presets -->
+            <h4>💾 Presets</h4>
+            <div style="margin: 15px 0;">
+                <label for="asf_preset_select">Load Preset:</label>
+                <div class="flex-container" style="gap: 5px;">
+                    <select id="asf_preset_select" class="text_pole" style="flex: 1;">
+                        <option value="">Select a preset...</option>
+                    </select>
+                    <button id="asf_load_preset" class="menu_button" title="Load selected preset">
+                        <i class="fa-solid fa-upload"></i>
+                    </button>
+                    <button id="asf_delete_preset" class="menu_button" title="Delete selected preset">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div style="margin: 15px 0;">
+                <label for="asf_preset_name">Save As:</label>
+                <div class="flex-container" style="gap: 5px;">
+                    <input type="text" id="asf_preset_name" class="text_pole" placeholder="Enter preset name"
+                        style="flex: 1;" />
+                    <button id="asf_save_preset" class="menu_button" title="Save current settings as preset">
+                        <i class="fa-solid fa-save"></i> Save
+                    </button>
+                </div>
+                <small>Save your current configuration with a custom name</small>
+            </div>
+
+            <hr>
+
+            <!-- Learning Mode -->
+            <h4>🧠 Learning Mode</h4>
+
+            <label class="checkbox_label" for="asf_learning_enabled">
+                <input type="checkbox" id="asf_learning_enabled" />
+                <span>Enable Learning Mode</span>
+            </label>
+            <small>Automatically learn slop patterns from Quality Mode rewrites</small>
+
+            <label class="checkbox_label" for="asf_auto_apply_learned">
+                <input type="checkbox" id="asf_auto_apply_learned" />
+                <span>Auto-apply learned rules</span>
+            </label>
+
+            <div class="flex-container">
+                <label for="asf_learn_threshold">Auto-generate rule after</label>
+                <input type="number" id="asf_learn_threshold" class="text_pole" min="1" max="20" value="3" />
+                <span>occurrences</span>
+            </div>
+
+            <div class="flex-container">
+                <label for="asf_max_learned">Maximum learned rules</label>
+                <input type="number" id="asf_max_learned" class="text_pole" min="10" max="200" value="50" />
+            </div>
+
+            <div style="margin: 15px 0;">
+                <strong>Learned Rules: <span id="asf_learned_count">0</span></strong>
+                <button id="asf_view_rules" class="menu_button" style="margin-left: 10px;">
+                    <i class="fa-solid fa-list"></i> Manage Rules
+                </button>
+                <button id="asf_clear_learned" class="menu_button caution" title="Clear all learned rules">
+                    <i class="fa-solid fa-trash"></i> Clear All
+                </button>
+            </div>
+
+            <hr>
+
+            <!-- UX Settings -->\n <h4>⚙️ UX Settings</h4>
+
+            <label class="checkbox_label" for="asf_auto_mode">
+                <input type="checkbox" id="asf_auto_mode" />
+                <span>Auto-mode: Apply changes automatically</span>
+            </label>
+            <small>When ON, changes are applied immediately. When OFF, you'll see a before/after comparison and can
+                Accept or Reject changes.</small>
+
+            <hr>
+
+            <!-- Prevention Mode (Prompt Injection) -->
+            <h4>🛡️ Prevention Mode (Prompt Injection)</h4>
+
+            <label class="checkbox_label" for="asf_enable_injection">
+                <input type="checkbox" id="asf_enable_injection" />
+                <span>Enable Prevention Mode</span>
+            </label>
+            <small>Inject anti-slop instructions before AI generates text</small>
+
+            <div style="margin: 10px 0;">
+                <label for="asf_injection_position">Injection Position:</label>
+                <select id="asf_injection_position" class="text_pole" style="width: 100%;">
+                    <option value="system">System Prompt (recommended)</option>
+                    <option value="after_scenario">After Scenario</option>
+                    <option value="before_user">Before User Message</option>
+                </select>
+            </div>
+
+            <div style="margin: 10px 0;">
+                <label for="asf_prevention_instructions">Prevention Instructions:</label>
+                <textarea id="asf_prevention_instructions" class="text_pole" rows="6"
+                    style="width: 100%; resize: vertical;"></textarea>
+                <small>Instructions shown to AI before generation. Learned patterns are automatically added!</small>
+            </div>
+
+            <hr>
+
+            <!-- User Protection -->
+            <h4>🛡️ User Character Protection</h4>
+            <label class="checkbox_label" for="asf_protect_user">
+                <input type="checkbox" id="asf_protect_user" />
+                <span>Protect {{user}} from AI control</span>
+            </label>
+
+            <label for="asf_user_names">User character names (comma-separated):</label>
+            <textarea id="asf_user_names" class="text_pole" rows="2"
+                placeholder="{{user}}, Raja, etc.">{{user}}</textarea>
+            <small>AI will not control, speak for, or describe these characters</small>
+
+            <hr>
+
+            <!-- Formatting & Immersion -->
+            <h4>✨ Formatting & Immersion</h4>
+
+            <label class="checkbox_label" for="asf_visual_effects">
+                <input type="checkbox" id="asf_visual_effects" />
+                <span>Enable Visual Text Effects (Inline CSS)</span>
+            </label>
+            <small>Allows AI to use glows, blurs, and colors to visualize emotions</small>
+
+            <label class="checkbox_label" for="asf_separate_dialogue">
+                <input type="checkbox" id="asf_separate_dialogue" />
+                <span>Force Dialogue Separation</span>
+            </label>
+            <small>Keeps dialogue on its own lines for better readability</small>
+
+            <hr>
+
+            <!-- Perspective -->
+            <h4>👁️ Perspective</h4>
+            <div class="flex-container">
+                <label>
+                    <input type="radio" name="asf_perspective" value="1st" />
+                    1st Person (I, me)
+                </label>
+                <label>
+                    <input type="radio" name="asf_perspective" value="2nd" />
+                    2nd Person (you)
+                </label>
+                <label>
+                    <input type="radio" name="asf_perspective" value="3rd" checked />
+                    3rd Person (he/she/they)
+                </label>
+            </div>
+
+            <hr>
+
+            <!-- Debug Mode -->
+            <h4>🐛 Debug Mode</h4>
+            <label class="checkbox_label" for="asf_debug_mode">
+                <input type="checkbox" id="asf_debug_mode" />
+                <span>Enable debug logging</span>
+            </label>
+            <small>When enabled, detailed diagnostics will be captured for each message</small>
+
+            <hr>
+
+            <!-- Last Execution Details -->
+            <h4>📊 Last Execution Details</h4>
+
+            <div style="margin: 10px 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label for="asf_history_select">View History:</label>
+                    <button id="asf_export_all_history" class="menu_button"
+                        title="Export all original and rewritten text">
+                        <i class="fa-solid fa-file-export"></i> Export All History
+                    </button>
+                </div>
+                <select id="asf_history_select" class="text_pole" style="width: 100%;">
+                    <option value="0">Most recent...</option>
+                </select>
+                <small>Select a previous run to view its diagnostics (last 20 runs stored)</small>
+            </div>
+
+            <div id="asf_diagnostics_status" style="margin: 10px 0; font-style: italic; opacity: 0.8;">
+                No messages processed yet
+            </div>
+
+            <div class="flex-container alignitemsflexstart" style="margin: 15px 0;">
+                <div style="flex: 1; margin-right: 10px;">
+                    <label for="asf_original_text"><strong>Original Text:</strong></label>
+                    <textarea id="asf_original_text" class="text_pole" rows="8" readonly
+                        style="width: 100%; resize: vertical; background: var(--black30alpha); font-family: monospace; font-size: 12px;"></textarea>
+                </div>
+                <div style="flex: 1; margin-left: 10px;">
+                    <label for="asf_rewritten_text"><strong>Rewritten Text:</strong></label>
+                    <textarea id="asf_rewritten_text" class="text_pole" rows="8" readonly
+                        style="width: 100%; resize: vertical; background: var(--black30alpha); font-family: monospace; font-size: 12px;"></textarea>
+                </div>
+            </div>
+
+            <div style="margin: 15px 0;">
+                <strong>Token Usage:</strong> <span id="asf_token_count" style="margin-left: 10px;">N/A</span>
+            </div>
+
+            <div style="margin: 15px 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label for="asf_debug_log"><strong>Debug Log:</strong></label>
+                    <div style="display: flex; gap: 5px;">
+                        <button id="asf_copy_log" class="menu_button" title="Copy debug log to clipboard">
+                            <i class="fa-solid fa-copy"></i> Copy
+                        </button>
+                        <button id="asf_export_log" class="menu_button" title="Export debug log as text file">
+                            <i class="fa-solid fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+                <textarea id="asf_debug_log" class="text_pole" rows="12" readonly
+                    style="width: 100%; resize: vertical; background: var(--black30alpha); font-family: monospace; font-size: 11px;"></textarea>
+            </div>
+
+        </div>
+    </div>
+</div>

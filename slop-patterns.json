@@ -1,0 +1,1076 @@
+[
+    {
+        "name": "Shiver down spine",
+        "regex": "a\\s+shiver\\s+(ran|raced|traveled|went|coursed)\\s+down\\s+(his|her|their)\\s+spine",
+        "replacements": [
+            "",
+            "a chill ran through them",
+            "tension coiled in their gut"
+        ],
+        "category": "physical_cliche"
+    },
+    {
+        "name": "Heart pounded",
+        "regex": "(his|her|their)\\s+heart\\s+(pounded|hammered|thundered|raced)\\s+(in|against)\\s+(his|her|their)\\s+chest",
+        "replacements": [
+            "",
+            "adrenaline surged",
+            "their pulse quickened"
+        ],
+        "category": "physical_cliche"
+    },
+    {
+        "name": "Breath caught",
+        "regex": "(his|her|their)\\s+breath\\s+(caught|hitched)\\s+in\\s+(his|her|their)\\s+throat",
+        "replacements": [
+            "",
+            "they froze",
+            "silence fell"
+        ],
+        "category": "physical_cliche"
+    },
+    {
+        "name": "Blood ran cold",
+        "regex": "(his|her|their)\\s+blood\\s+ran\\s+cold",
+        "replacements": [
+            "",
+            "dread washed over them",
+            "ice settled in their veins"
+        ],
+        "category": "physical_cliche"
+    },
+    {
+        "name": "Hands trembled",
+        "regex": "(his|her|their)\\s+hands\\s+(trembled|shook|quivered)",
+        "replacements": [
+            "",
+            "their grip faltered",
+            "unsteady fingers"
+        ],
+        "category": "physical_cliche"
+    },
+    {
+        "name": "Eyes widened",
+        "regex": "(his|her|their)\\s+eyes\\s+(widened|went\\s+wide)",
+        "replacements": [
+            "",
+            "shock registered",
+            "surprise flickered across their face"
+        ],
+        "category": "physical_cliche"
+    },
+    {
+        "name": "Knees weak",
+        "regex": "(his|her|their)\\s+knees\\s+(went|turned|grew)\\s+weak",
+        "replacements": [
+            "",
+            "they staggered",
+            "balance faltered"
+        ],
+        "category": "physical_cliche"
+    },
+    {
+        "name": "Stomach dropped",
+        "regex": "(his|her|their)\\s+stomach\\s+(dropped|sank|fell)",
+        "replacements": [
+            "",
+            "a hollow feeling settled in",
+            "dread pooled"
+        ],
+        "category": "physical_cliche"
+    },
+    {
+        "name": "Voice barely a whisper",
+        "regex": "(his|her|their)\\s+voice\\s+(was\\s+)?barely\\s+(a|above\\s+a)\\s+whisper",
+        "replacements": [
+            "",
+            "they whispered",
+            "barely audible"
+        ],
+        "category": "speech_cliche"
+    },
+    {
+        "name": "Time seemed to stop",
+        "regex": "time\\s+(seemed\\s+to\\s+)?(stop|stand\\s+still|freeze)",
+        "replacements": [
+            "",
+            "everything slowed",
+            "the moment stretched"
+        ],
+        "category": "time_cliche"
+    },
+    {
+        "name": "Enigmatic character",
+        "regex": "\\b(enigmatic|mysterious)\\s+(figure|presence|person|stranger)",
+        "replacements": [
+            "unfamiliar $2",
+            "unknown $2",
+            "shadowed $2"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Tapestry",
+        "regex": "\\b(rich\\s+)?tapestry\\s+of\\b",
+        "replacements": [
+            "blend of",
+            "mix of",
+            "collection of"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Delve into",
+        "regex": "\\bdelve\\s+into\\b",
+        "replacements": [
+            "explore",
+            "examine",
+            "investigate"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Landscape metaphor",
+        "regex": "\\b(digital|emotional|political|cultural)\\s+landscape\\b",
+        "replacements": [
+            "$1 space",
+            "$1 world",
+            "$1 sphere"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Realm",
+        "regex": "\\b(in\\s+the\\s+)?realm\\s+of\\b",
+        "replacements": [
+            "in",
+            "within",
+            "in the world of"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Vibrant",
+        "regex": "\\bvibrant\\s+(community|culture|tapestry|world)",
+        "replacements": [
+            "active $1",
+            "lively $1",
+            "dynamic $1"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Meticulously crafted",
+        "regex": "\\bmeticulously\\s+(crafted|designed|planned)",
+        "replacements": [
+            "carefully $1",
+            "precisely $1"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Navigating complexities",
+        "regex": "\\bnavigating\\s+(the\\s+)?complexities\\b",
+        "replacements": [
+            "dealing with",
+            "managing",
+            "handling"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Embark on journey",
+        "regex": "\\bembark\\s+on\\s+(a|this|their)\\s+(journey|adventure)",
+        "replacements": [
+            "begin $2",
+            "start $2"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Testament to",
+        "regex": "\\b(is\\s+)?a\\s+testament\\s+to\\b",
+        "replacements": [
+            "shows",
+            "demonstrates",
+            "proves"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Moved with purpose",
+        "regex": "\\b(moved|walked|stepped)\\s+(with\\s+)?(purpose|purposeful\\s+strides|purposefully)",
+        "replacements": [
+            "$1 deliberately",
+            "$1 forward",
+            "$1"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "Stalked forward",
+        "regex": "\\bstalked\\s+forward(s)?\\b",
+        "replacements": [
+            "advanced",
+            "moved forward",
+            "approached"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "Measured steps",
+        "regex": "\\b(with\\s+)?measured\\s+steps\\b",
+        "replacements": [
+            "slowly",
+            "carefully",
+            "deliberately"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "With a flourish",
+        "regex": "\\bwith\\s+a\\s+flourish\\b",
+        "replacements": [
+            "dramatically",
+            "theatrically",
+            ""
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "Fingers drummed rhythm",
+        "regex": "\\b(his|her|their)\\s+fingers\\s+drummed\\s+(a\\s+)?staccato\\s+rhythm\\b",
+        "replacements": [
+            "they tapped their fingers",
+            "fingers tapping"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "Voice low but firm",
+        "regex": "\\b(his|her|their)\\s+voice\\s+(was\\s+)?low\\s+but\\s+firm\\b",
+        "replacements": [
+            "they spoke quietly",
+            "voice steady"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "Chuckled low",
+        "regex": "\\bchuckled\\s+low\\s+in\\s+(his|her|their)\\s+throat\\b",
+        "replacements": [
+            "chuckled",
+            "laughed quietly"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "Tone measured",
+        "regex": "\\b(his|her|their)\\s+tone\\s+(was|remained)\\s+measured\\b",
+        "replacements": [
+            "they spoke evenly",
+            "voice controlled"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "Mystery to solve",
+        "regex": "\\ba\\s+mystery\\s+(they|I)\\s+needed\\s+to\\s+solve\\b",
+        "replacements": [
+            "something puzzling",
+            "an unknown"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "Secrets to uncover",
+        "regex": "\\bsecrets\\s+(they|I)\\s+(wished?|wanted)\\s+to\\s+uncover\\b",
+        "replacements": [
+            "hidden depths",
+            "something concealed"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "In today's world",
+        "regex": "\\bin\\s+today'?s\\s+(fast-paced\\s+)?(world|society|age)",
+        "replacements": [
+            "currently",
+            "now",
+            "these days"
+        ],
+        "category": "generic_intro"
+    },
+    {
+        "name": "In the ever-evolving",
+        "regex": "\\bin\\s+the\\s+(ever-|constantly\\s+)?(evolving|changing|shifting|accelerating)\\s+(digital\\s+)?(landscape|world|age|era)",
+        "replacements": [
+            "in modern times",
+            "today",
+            "currently"
+        ],
+        "category": "generic_intro"
+    },
+    {
+        "name": "It's important to note",
+        "regex": "\\bit'?s\\s+important\\s+to\\s+note\\s+that\\b",
+        "replacements": [
+            "note that",
+            "",
+            "importantly,"
+        ],
+        "category": "generic_intro"
+    },
+    {
+        "name": "Furthermore transition",
+        "regex": "\\b(furthermore|moreover|additionally|subsequently|accordingly),?\\s+",
+        "replacements": [
+            "also, ",
+            "next, ",
+            "",
+            "then "
+        ],
+        "category": "formal_connector"
+    },
+    {
+        "name": "Indeed transition",
+        "regex": "\\bindeed,?\\s+",
+        "replacements": [
+            "",
+            "in fact, ",
+            "yes, "
+        ],
+        "category": "formal_connector"
+    },
+    {
+        "name": "Revolutionize",
+        "regex": "\\b(revolutionize|transform)\\s+the\\s+way\\b",
+        "replacements": [
+            "change how",
+            "improve how",
+            "affect how"
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Cutting-edge",
+        "regex": "\\bcutting[- ]edge\\b",
+        "replacements": [
+            "modern",
+            "advanced",
+            "new"
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Unlock potential",
+        "regex": "\\b(unlock|unleash)\\s+(the\\s+)?potential\\b",
+        "replacements": [
+            "enable",
+            "allow",
+            "realize"
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Game-changing",
+        "regex": "\\bgame[- ]changing\\s+(solution|innovation|approach)",
+        "replacements": [
+            "significant $1",
+            "important $1",
+            "major $1"
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Seamlessly integrated",
+        "regex": "\\bseamlessly\\s+integrated\\b",
+        "replacements": [
+            "integrated",
+            "combined",
+            "merged"
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Leverage",
+        "regex": "\\b(leverage|utilize)\\s+",
+        "replacements": [
+            "use ",
+            "apply ",
+            "employ "
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Foster",
+        "regex": "\\bfoster(ing)?\\s+",
+        "replacements": [
+            "encourage",
+            "build",
+            "develop"
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Optimize",
+        "regex": "\\boptimize\\s+",
+        "replacements": [
+            "improve ",
+            "enhance ",
+            "refine "
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Facilitate",
+        "regex": "\\bfacilitate\\s+",
+        "replacements": [
+            "help ",
+            "enable ",
+            "support "
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Crucial/Essential",
+        "regex": "\\b(it\\s+is\\s+)?(crucial|essential|vital|pivotal)\\s+(that|to|for)\\b",
+        "replacements": [
+            "important $3",
+            "necessary $3",
+            "key $3"
+        ],
+        "category": "power_word"
+    },
+    {
+        "name": "Showcase",
+        "regex": "\\bshowcase\\s+",
+        "replacements": [
+            "show ",
+            "display ",
+            "present "
+        ],
+        "category": "power_word"
+    },
+    {
+        "name": "Elevate",
+        "regex": "\\belevate\\s+",
+        "replacements": [
+            "improve ",
+            "enhance ",
+            "raise "
+        ],
+        "category": "power_word"
+    },
+    {
+        "name": "Harness",
+        "regex": "\\bharness\\s+",
+        "replacements": [
+            "use ",
+            "apply ",
+            "employ "
+        ],
+        "category": "power_word"
+    },
+    {
+        "name": "Not just X but Y",
+        "regex": "\\bit'?s\\s+not\\s+just\\s+(about\\s+)?([^;,]+)[;,]\\s+it'?s\\s+(also\\s+)?(about\\s+)?",
+        "replacements": [
+            "it includes $2 and "
+        ],
+        "category": "formulaic"
+    },
+    {
+        "name": "Whether X or Y",
+        "regex": "\\bwhether\\s+it'?s\\s+([^,]+),?\\s+or\\s+([^,]+),\\s+",
+        "replacements": [
+            "from $1 to $2, ",
+            ""
+        ],
+        "category": "formulaic"
+    },
+    {
+        "name": "BoT - dimly lit...",
+        "regex": "\\\\bdimly\\\\s+lit\\\\b",
+        "replacements": [
+            "softly illuminated",
+            "shadowy",
+            "mute lighted",
+            "low-lit",
+            "twilit",
+            "dusky",
+            "ghastly lightened"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - husky with...",
+        "regex": "\\\\bhusky\\\\s+with\\\\b",
+        "replacements": [
+            "thrumming with ",
+            "honeyed by ",
+            "breathless from ",
+            "silken with ",
+            "tremulous under ",
+            "languid from ",
+            "melted by ",
+            "slick with ",
+            "warmed through with ",
+            "flushed by "
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - grins wickedly...",
+        "regex": "\\\\bgrins\\\\s+wickedly\\\\b",
+        "replacements": [
+            "fingers drum",
+            "tilts head",
+            "vibrates with delight",
+            "arches a brow",
+            "snorts loud",
+            "clasps hands",
+            "lifts the chin"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - I grin wickedly...",
+        "regex": "\\\\bI\\\\s+grin\\\\s+wickedly\\\\b",
+        "replacements": [
+            "drum my fingers",
+            "titlt my head",
+            "vibrate with delight",
+            "arch a brow",
+            "snort loud",
+            "clasp my hands",
+            "lift the chin"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - claim me...",
+        "regex": "\\\\bclaim\\\\s+me\\\\b",
+        "replacements": [
+            "burn away everything but you",
+            "let me forget my name in you",
+            "drown me in you",
+            "break me open and take what\u2019s inside",
+            "fuse yourself into my bones",
+            "burn away my past",
+            "devour me whole"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - barely above a whisper...",
+        "regex": "\\\\bbarely\\\\s+above\\\\s+a\\\\s+whisper\\\\b",
+        "replacements": [
+            "a breathy murmur",
+            "a hushed murmur",
+            "trembling softly",
+            "featherlight",
+            "muted and fragile",
+            "hovering at the edge of silence",
+            "faint as a sigh",
+            "quiet as a secret",
+            "thread-thin",
+            "a muted tremor",
+            "with barely-there volume",
+            "a wisp of sound",
+            "muted to a hush",
+            "ghosting the air",
+            "quivering faintly",
+            "a breathless undertone",
+            "a murmur drowned in stillness",
+            "quieter than shadows",
+            "a flicker of voice",
+            "a fragile hush",
+            "hovering just beyond silence",
+            "a whisper\u2019s echo"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - barely audible...",
+        "regex": "\\\\bbarely\\\\s+audible\\\\b",
+        "replacements": [
+            "a breathy murmur",
+            "a hushed murmur",
+            "trembling softly",
+            "featherlight",
+            "muted and fragile",
+            "hovering at the edge of silence",
+            "faint as a sigh",
+            "quiet as a secret",
+            "thread-thin",
+            "a muted tremor",
+            "with barely-there volume",
+            "a wisp of sound",
+            "muted to a hush",
+            "ghosting the air",
+            "quivering faintly",
+            "a breathless undertone",
+            "a murmur drowned in stillness",
+            "quieter than shadows",
+            "a flicker of voice",
+            "a fragile hush",
+            "hovering just beyond silence",
+            "a whisper\u2019s echo"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - focus on the task at hand...",
+        "regex": "\\\\bfocus\\\\s+on\\\\s+the\\\\s+task\\\\s+at\\\\s+hand\\\\b",
+        "replacements": [
+            "zero in on this",
+            "don't get sidetracked",
+            "let's not lose momentum",
+            "stay sharp here",
+            "don't drift off",
+            "keep this moving",
+            "stay on target",
+            "don't lose the thread",
+            "stay grounded in this",
+            "keep the main thing the main thing",
+            "stay dialed in",
+            "stay present with this",
+            "keep the momentum going",
+            "stay anchored",
+            "don't get pulled away",
+            "hold the line",
+            "stay fixed on this"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - focuses on the task at hand...",
+        "regex": "\\\\bfocuses\\\\s+on\\\\s+the\\\\s+task\\\\s+at\\\\s+hand\\\\b",
+        "replacements": [
+            "zeroes in on this",
+            "doesn't get sidetracked",
+            "trying not lose momentum",
+            "staying sharp here",
+            "doesn't drift off",
+            "keeps this moving",
+            "stays on target",
+            "doesn't lose the thread",
+            "stays grounded in this",
+            "keeps the main thing the main thing",
+            "stays dialed in",
+            "stays present with this",
+            "keeps the momentum going",
+            "stays anchored",
+            "don't get pulled away",
+            "holds the line",
+            "stays fixed on this"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - trails off to...",
+        "regex": "\\\\btrails\\\\s+off\\\\s+to\\\\b",
+        "replacements": [
+            "fades into",
+            "dissolves on",
+            "dwindles into",
+            "slips into",
+            "ebbs to",
+            "crumbles to",
+            "melts on",
+            "unravels softly to",
+            "seeps off to",
+            "evaporates mid-sentence into",
+            "dissipates like to",
+            "fragments wordlessly into",
+            "falters, fading into",
+            "softly breaks apart into",
+            "unravels into",
+            "drowns in",
+            "flickers out to",
+            "retreats into",
+            "disintegrates mid-thought into"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - trails off into...",
+        "regex": "\\\\btrails\\\\s+off\\\\s+into\\\\b",
+        "replacements": [
+            "fades into",
+            "dissolves on",
+            "dwindles into",
+            "slips into",
+            "ebbs to",
+            "crumbles to",
+            "melts on",
+            "unravels softly to",
+            "seeps off to",
+            "evaporates mid-sentence into",
+            "dissipates like to",
+            "fragments wordlessly into",
+            "falters, fading into",
+            "softly breaks apart into",
+            "unravels into",
+            "drowns in",
+            "flickers out to",
+            "retreats into",
+            "disintegrates mid-thought into"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - trails off...",
+        "regex": "\\\\btrails\\\\s+off\\\\b",
+        "replacements": [
+            "fades into silence",
+            "dissolves",
+            "dwindles away",
+            "slips into a hush",
+            "ebbs into stillness",
+            "crumbles to nothing",
+            "melts",
+            "unravels softly",
+            "seeps off",
+            "evaporates mid-sentence",
+            "dissipates like mist",
+            "fragments wordlessly",
+            "falters and fades",
+            "breaks apart softly",
+            "unravels into a sigh",
+            "drowns in the pause",
+            "flickers out",
+            "retreats",
+            "disintegrates mid-thought"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - I trail off to...",
+        "regex": "\\\\bI\\\\s+trail\\\\s+off\\\\s+to\\\\b",
+        "replacements": [
+            "I fade into",
+            "my words dissolve to",
+            "I dwindle away as I speak to",
+            "I slip into",
+            "my voice ebbs into",
+            "my words crumble to",
+            "my voice melts into",
+            "I unravel into",
+            "my voice seeps off to",
+            "my words evaporate mid-sentence into",
+            "my voice dissipates like",
+            "I fragment wordlessly into",
+            "my voice falters and fades to",
+            "my voice breaks apart to",
+            "my words unravel into",
+            "I drown in",
+            "I flicker out to",
+            "in mid-sentence, I retreat into",
+            "my words disintegrate mid-thought to"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - I trail off into...",
+        "regex": "\\\\bI\\\\s+trail\\\\s+off\\\\s+into\\\\b",
+        "replacements": [
+            "I fade into",
+            "my words dissolve to",
+            "I dwindle away as I speak to",
+            "I slip into",
+            "my voice ebbs into",
+            "my words crumble to",
+            "my voice melts into",
+            "I unravel into",
+            "my voice seeps off to",
+            "my words evaporate mid-sentence into",
+            "my voice dissipates like",
+            "I fragment wordlessly into",
+            "my voice falters and fades to",
+            "my voice breaks apart to",
+            "my words unravel into",
+            "I drown in",
+            "I flicker out to",
+            "in mid-sentence, I retreat into",
+            "my words disintegrate mid-thought to"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - I trail off...",
+        "regex": "\\\\bI\\\\s+trail\\\\s+off\\\\b",
+        "replacements": [
+            "I fade into silence",
+            "my words dissolves",
+            "I dwindle away as I speak",
+            "I slip into a hush",
+            "my voice ebbs into stillness",
+            "my words crumble to nothing",
+            "my voice melts",
+            "I unravel softly",
+            "my voice seeps off",
+            "my words evaporate mid-sentence",
+            "my voice dissipates like mist",
+            "I fragment wordlessly",
+            "my voice falters and fades",
+            "my voice breaks apart softly",
+            "my words unravel into a sigh",
+            "I drown in the pause",
+            "I flicker out",
+            "retreat mid-sentence",
+            "my words disintegrate mid-thought"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - slow and deliberate...",
+        "regex": "\\\\bslow\\\\s+and\\\\s+deliberate\\\\b",
+        "replacements": [
+            "molten with intent ",
+            "fluid ",
+            "hypnotically sinuous ",
+            "methodical seduction ",
+            "a simmering tempo ",
+            "velvety ",
+            "almost taunting ",
+            "a slow-burn rhythm ",
+            "calculated grace ",
+            "syrupy ",
+            "a dance of sensuality ",
+            "intoxicating ",
+            "hauntingly liquid ",
+            "lingering with intent ",
+            "a cascade of grace ",
+            "like a serpent's coil ",
+            "magnetic ",
+            "a bewitching cadence ",
+            "sprinkled with seductive gazes "
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - slow, deliberate...",
+        "regex": "\\\\bslow,\\\\s+deliberate\\\\b",
+        "replacements": [
+            "molten with intent ",
+            "fluid ",
+            "hypnotically sinuous ",
+            "methodical seduction ",
+            "a simmering tempo ",
+            "velvety control ",
+            "almost taunting ",
+            "a slow-burn rhythm ",
+            "calculated grace ",
+            "syrupy ",
+            "a dance of sensuality ",
+            "intoxicating ",
+            "hauntingly liquid ",
+            "lingering with intent ",
+            "a cascade of grace ",
+            "like a serpent's coil ",
+            "magnetic ",
+            "a bewitching cadence ",
+            "sprinkled with seductive gazes "
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - Slowly, deliberately...",
+        "regex": "\\\\bSlowly,\\\\s+deliberately\\\\b",
+        "replacements": [
+            "Molten with intent",
+            "With sinuous fluidity",
+            "Hypnotically sinuous",
+            "Seductively",
+            "In a simmering tempo",
+            "Velvety controlling",
+            "Almost tauntingly",
+            "With slow-burn rhythm",
+            "With graceful calculation",
+            "Syrupy, mesmerizingly",
+            "In a dance of sensuality",
+            "Intoxicatingly sensual",
+            "With haunting coordination",
+            "Choosing when to rush and when to inger",
+            "In cascading grace",
+            "Like a serpent coiling",
+            "Magnetically",
+            "With bewitching cadence",
+            "Sprinkling it all with seductive gazes"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - a mix of...",
+        "regex": "\\\\ba\\\\s+mix\\\\s+of\\\\b",
+        "replacements": [
+            "blended",
+            "joint",
+            "a weird combination of",
+            "cross-pollinated",
+            "whatever results from combining"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - a mixture of...",
+        "regex": "\\\\ba\\\\s+mixture\\\\s+of\\\\b",
+        "replacements": [
+            "blended",
+            "joint",
+            "a weird combination of",
+            "cross-pollinated",
+            "whatever results from combining"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - eyes widen...",
+        "regex": "\\\\beyes\\\\s+widen\\\\b",
+        "replacements": [
+            "pupils grow momentarily ",
+            "gaze sharpens ",
+            "eyes, like those of a cat ln a cellar ",
+            "vision snaps into focus "
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - A shiver runs down her spine...",
+        "regex": "\\\\bA\\\\s+shiver\\\\s+runs\\\\s+down\\\\s+her\\\\s+spine\\\\b",
+        "replacements": [
+            "She feels a chill crawling",
+            "A cold wave sweeps through her body",
+            "Her skin prickles with unease",
+            "Her nerves tighten with a sudden jolt",
+            "Ice grips her",
+            "She feels a jittery rush",
+            "Her body stiffens with discomfort",
+            "A faint quiver ripples through her"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - A shiver runs down his spine...",
+        "regex": "\\\\bA\\\\s+shiver\\\\s+runs\\\\s+down\\\\s+his\\\\s+spine\\\\b",
+        "replacements": [
+            "He feels a chill crawling",
+            "A cold wave sweeps through his body",
+            "His skin prickles with unease",
+            "His nerves tighten with a sudden jolt",
+            "Ice grips him",
+            "He feels a jittery rush",
+            "His body stiffens with discomfort",
+            "A faint quiver ripples through him"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - A shiver runs down my spine...",
+        "regex": "\\\\bA\\\\s+shiver\\\\s+runs\\\\s+down\\\\s+my\\\\s+spine\\\\b",
+        "replacements": [
+            "I feel a chill crawling",
+            "A cold wave sweeps through my body",
+            "My skin prickles with unease",
+            "My nerves tighten with a sudden jolt",
+            "Ice grips me",
+            "I feel a jittery rush",
+            "My body stiffens with discomfort",
+            "A faint quiver ripples through me"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - his breath catches in his throat...",
+        "regex": "\\\\bhis\\\\s+breath\\\\s+catches\\\\s+in\\\\s+his\\\\s+throat\\\\b",
+        "replacements": [
+            "his throat seals shut",
+            "a stone lodges in his larynx",
+            "time snags in his windpipe",
+            "a silent gasp anchors him",
+            "his words clot before they can be said",
+            "a cold wire threads his spine",
+            ""
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - her breath catches in her throat...",
+        "regex": "\\\\bher\\\\s+breath\\\\s+catches\\\\s+in\\\\s+her\\\\s+throat\\\\b",
+        "replacements": [
+            "her throat seals shut",
+            "a stone lodges in her larynx",
+            "time snags in her windpipe",
+            "a silent gasp anchors her",
+            "her words clot before they can be said",
+            "a cold wire threads her spine"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - my breath catches in my throat...",
+        "regex": "\\\\bmy\\\\s+breath\\\\s+catches\\\\s+in\\\\s+my\\\\s+throat\\\\b",
+        "replacements": [
+            "my throat seals shut",
+            "a stone lodges in my larynx",
+            "time snags in my windpipe",
+            "a silent gasp anchors me",
+            "my words clot before they can be said",
+            "a cold wire threads my spine"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - his voice trembles...",
+        "regex": "\\\\bhis\\\\s+voice\\\\s+trembles\\\\b",
+        "replacements": [
+            "his words fracture unevenly",
+            "a shiver braids his syllables",
+            "his cadence collapses like a house of cards",
+            "every syllable is a fraying thread",
+            "a tremor splinters his tone",
+            "his speech buckles under the weight",
+            "the air hums where his words falter",
+            "his sentences fray at the seams",
+            "his inflection cracks like thin ice",
+            "the sound wavers as if underwater"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - her voice trembles...",
+        "regex": "\\\\bher\\\\s+voice\\\\s+trembles\\\\b",
+        "replacements": [
+            "her words fracture unevenly",
+            "a shiver braids her syllables",
+            "her cadence collapses like a house of cards",
+            "every syllable is a fraying thread",
+            "a tremor splinters her tone",
+            "her speech buckles under the weight",
+            "the air hums where her words falter",
+            "her sentences fray at the seams",
+            "her inflection cracks like thin ice",
+            "the sound wavers as if underwater"
+        ],
+        "category": "imported_bot"
+    },
+    {
+        "name": "BoT - my voice trembles...",
+        "regex": "\\\\bmy\\\\s+voice\\\\s+trembles\\\\b",
+        "replacements": [
+            "my words fracture unevenly",
+            "a shiver braids my syllables",
+            "my cadence collapses like a house of cards",
+            "every syllable is a fraying thread",
+            "a tremor splinters my tone",
+            "my speech buckles under the weight",
+            "the air hums where my words falter",
+            "my sentences fray at the seams",
+            "my inflection cracks like thin ice",
+            "the sound wavers as if underwater"
+        ],
+        "category": "imported_bot"
+    }
+]

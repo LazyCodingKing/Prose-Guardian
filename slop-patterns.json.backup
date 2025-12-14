@@ -1,0 +1,492 @@
+[
+    {
+        "name": "Shiver down spine",
+        "regex": "a\\s+shiver\\s+(ran|raced|traveled|went|coursed)\\s+down\\s+(his|her|their)\\s+spine",
+        "replacements": [
+            "",
+            "a chill ran through them",
+            "tension coiled in their gut"
+        ],
+        "category": "physical_cliche"
+    },
+    {
+        "name": "Heart pounded",
+        "regex": "(his|her|their)\\s+heart\\s+(pounded|hammered|thundered|raced)\\s+(in|against)\\s+(his|her|their)\\s+chest",
+        "replacements": [
+            "",
+            "adrenaline surged",
+            "their pulse quickened"
+        ],
+        "category": "physical_cliche"
+    },
+    {
+        "name": "Breath caught",
+        "regex": "(his|her|their)\\s+breath\\s+(caught|hitched)\\s+in\\s+(his|her|their)\\s+throat",
+        "replacements": [
+            "",
+            "they froze",
+            "silence fell"
+        ],
+        "category": "physical_cliche"
+    },
+    {
+        "name": "Blood ran cold",
+        "regex": "(his|her|their)\\s+blood\\s+ran\\s+cold",
+        "replacements": [
+            "",
+            "dread washed over them",
+            "ice settled in their veins"
+        ],
+        "category": "physical_cliche"
+    },
+    {
+        "name": "Hands trembled",
+        "regex": "(his|her|their)\\s+hands\\s+(trembled|shook|quivered)",
+        "replacements": [
+            "",
+            "their grip faltered",
+            "unsteady fingers"
+        ],
+        "category": "physical_cliche"
+    },
+    {
+        "name": "Eyes widened",
+        "regex": "(his|her|their)\\s+eyes\\s+(widened|went\\s+wide)",
+        "replacements": [
+            "",
+            "shock registered",
+            "surprise flickered across their face"
+        ],
+        "category": "physical_cliche"
+    },
+    {
+        "name": "Knees weak",
+        "regex": "(his|her|their)\\s+knees\\s+(went|turned|grew)\\s+weak",
+        "replacements": [
+            "",
+            "they staggered",
+            "balance faltered"
+        ],
+        "category": "physical_cliche"
+    },
+    {
+        "name": "Stomach dropped",
+        "regex": "(his|her|their)\\s+stomach\\s+(dropped|sank|fell)",
+        "replacements": [
+            "",
+            "a hollow feeling settled in",
+            "dread pooled"
+        ],
+        "category": "physical_cliche"
+    },
+    {
+        "name": "Voice barely a whisper",
+        "regex": "(his|her|their)\\s+voice\\s+(was\\s+)?barely\\s+(a|above\\s+a)\\s+whisper",
+        "replacements": [
+            "",
+            "they whispered",
+            "barely audible"
+        ],
+        "category": "speech_cliche"
+    },
+    {
+        "name": "Time seemed to stop",
+        "regex": "time\\s+(seemed\\s+to\\s+)?(stop|stand\\s+still|freeze)",
+        "replacements": [
+            "",
+            "everything slowed",
+            "the moment stretched"
+        ],
+        "category": "time_cliche"
+    },
+    {
+        "name": "Enigmatic character",
+        "regex": "\\b(enigmatic|mysterious)\\s+(figure|presence|person|stranger)",
+        "replacements": [
+            "unfamiliar $2",
+            "unknown $2",
+            "shadowed $2"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Tapestry",
+        "regex": "\\b(rich\\s+)?tapestry\\s+of\\b",
+        "replacements": [
+            "blend of",
+            "mix of",
+            "collection of"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Delve into",
+        "regex": "\\bdelve\\s+into\\b",
+        "replacements": [
+            "explore",
+            "examine",
+            "investigate"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Landscape metaphor",
+        "regex": "\\b(digital|emotional|political|cultural)\\s+landscape\\b",
+        "replacements": [
+            "$1 space",
+            "$1 world",
+            "$1 sphere"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Realm",
+        "regex": "\\b(in\\s+the\\s+)?realm\\s+of\\b",
+        "replacements": [
+            "in",
+            "within",
+            "in the world of"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Vibrant",
+        "regex": "\\bvibrant\\s+(community|culture|tapestry|world)",
+        "replacements": [
+            "active $1",
+            "lively $1",
+            "dynamic $1"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Meticulously crafted",
+        "regex": "\\bmeticulously\\s+(crafted|designed|planned)",
+        "replacements": [
+            "carefully $1",
+            "precisely $1"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Navigating complexities",
+        "regex": "\\bnavigating\\s+(the\\s+)?complexities\\b",
+        "replacements": [
+            "dealing with",
+            "managing",
+            "handling"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Embark on journey",
+        "regex": "\\bembark\\s+on\\s+(a|this|their)\\s+(journey|adventure)",
+        "replacements": [
+            "begin $2",
+            "start $2"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Testament to",
+        "regex": "\\b(is\\s+)?a\\s+testament\\s+to\\b",
+        "replacements": [
+            "shows",
+            "demonstrates",
+            "proves"
+        ],
+        "category": "purple_prose"
+    },
+    {
+        "name": "Moved with purpose",
+        "regex": "\\b(moved|walked|stepped)\\s+(with\\s+)?(purpose|purposeful\\s+strides|purposefully)",
+        "replacements": [
+            "$1 deliberately",
+            "$1 forward",
+            "$1"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "Stalked forward",
+        "regex": "\\bstalked\\s+forward(s)?\\b",
+        "replacements": [
+            "advanced",
+            "moved forward",
+            "approached"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "Measured steps",
+        "regex": "\\b(with\\s+)?measured\\s+steps\\b",
+        "replacements": [
+            "slowly",
+            "carefully",
+            "deliberately"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "With a flourish",
+        "regex": "\\bwith\\s+a\\s+flourish\\b",
+        "replacements": [
+            "dramatically",
+            "theatrically",
+            ""
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "Fingers drummed rhythm",
+        "regex": "\\b(his|her|their)\\s+fingers\\s+drummed\\s+(a\\s+)?staccato\\s+rhythm\\b",
+        "replacements": [
+            "they tapped their fingers",
+            "fingers tapping"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "Voice low but firm",
+        "regex": "\\b(his|her|their)\\s+voice\\s+(was\\s+)?low\\s+but\\s+firm\\b",
+        "replacements": [
+            "they spoke quietly",
+            "voice steady"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "Chuckled low",
+        "regex": "\\bchuckled\\s+low\\s+in\\s+(his|her|their)\\s+throat\\b",
+        "replacements": [
+            "chuckled",
+            "laughed quietly"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "Tone measured",
+        "regex": "\\b(his|her|their)\\s+tone\\s+(was|remained)\\s+measured\\b",
+        "replacements": [
+            "they spoke evenly",
+            "voice controlled"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "Mystery to solve",
+        "regex": "\\ba\\s+mystery\\s+(they|I)\\s+needed\\s+to\\s+solve\\b",
+        "replacements": [
+            "something puzzling",
+            "an unknown"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "Secrets to uncover",
+        "regex": "\\bsecrets\\s+(they|I)\\s+(wished?|wanted)\\s+to\\s+uncover\\b",
+        "replacements": [
+            "hidden depths",
+            "something concealed"
+        ],
+        "category": "roleplay_slop"
+    },
+    {
+        "name": "In today's world",
+        "regex": "\\bin\\s+today'?s\\s+(fast-paced\\s+)?(world|society|age)",
+        "replacements": [
+            "currently",
+            "now",
+            "these days"
+        ],
+        "category": "generic_intro"
+    },
+    {
+        "name": "In the ever-evolving",
+        "regex": "\\bin\\s+the\\s+(ever-|constantly\\s+)?(evolving|changing|shifting|accelerating)\\s+(digital\\s+)?(landscape|world|age|era)",
+        "replacements": [
+            "in modern times",
+            "today",
+            "currently"
+        ],
+        "category": "generic_intro"
+    },
+    {
+        "name": "It's important to note",
+        "regex": "\\bit'?s\\s+important\\s+to\\s+note\\s+that\\b",
+        "replacements": [
+            "note that",
+            "",
+            "importantly,"
+        ],
+        "category": "generic_intro"
+    },
+    {
+        "name": "Furthermore transition",
+        "regex": "\\b(furthermore|moreover|additionally|subsequently|accordingly),?\\s+",
+        "replacements": [
+            "also, ",
+            "next, ",
+            "",
+            "then "
+        ],
+        "category": "formal_connector"
+    },
+    {
+        "name": "Indeed transition",
+        "regex": "\\bindeed,?\\s+",
+        "replacements": [
+            "",
+            "in fact, ",
+            "yes, "
+        ],
+        "category": "formal_connector"
+    },
+    {
+        "name": "Revolutionize",
+        "regex": "\\b(revolutionize|transform)\\s+the\\s+way\\b",
+        "replacements": [
+            "change how",
+            "improve how",
+            "affect how"
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Cutting-edge",
+        "regex": "\\bcutting[- ]edge\\b",
+        "replacements": [
+            "modern",
+            "advanced",
+            "new"
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Unlock potential",
+        "regex": "\\b(unlock|unleash)\\s+(the\\s+)?potential\\b",
+        "replacements": [
+            "enable",
+            "allow",
+            "realize"
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Game-changing",
+        "regex": "\\bgame[- ]changing\\s+(solution|innovation|approach)",
+        "replacements": [
+            "significant $1",
+            "important $1",
+            "major $1"
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Seamlessly integrated",
+        "regex": "\\bseamlessly\\s+integrated\\b",
+        "replacements": [
+            "integrated",
+            "combined",
+            "merged"
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Leverage",
+        "regex": "\\b(leverage|utilize)\\s+",
+        "replacements": [
+            "use ",
+            "apply ",
+            "employ "
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Foster",
+        "regex": "\\bfoster(ing)?\\s+",
+        "replacements": [
+            "encourage",
+            "build",
+            "develop"
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Optimize",
+        "regex": "\\boptimize\\s+",
+        "replacements": [
+            "improve ",
+            "enhance ",
+            "refine "
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Facilitate",
+        "regex": "\\bfacilitate\\s+",
+        "replacements": [
+            "help ",
+            "enable ",
+            "support "
+        ],
+        "category": "buzzword"
+    },
+    {
+        "name": "Crucial/Essential",
+        "regex": "\\b(it\\s+is\\s+)?(crucial|essential|vital|pivotal)\\s+(that|to|for)\\b",
+        "replacements": [
+            "important $3",
+            "necessary $3",
+            "key $3"
+        ],
+        "category": "power_word"
+    },
+    {
+        "name": "Showcase",
+        "regex": "\\bshowcase\\s+",
+        "replacements": [
+            "show ",
+            "display ",
+            "present "
+        ],
+        "category": "power_word"
+    },
+    {
+        "name": "Elevate",
+        "regex": "\\belevate\\s+",
+        "replacements": [
+            "improve ",
+            "enhance ",
+            "raise "
+        ],
+        "category": "power_word"
+    },
+    {
+        "name": "Harness",
+        "regex": "\\bharness\\s+",
+        "replacements": [
+            "use ",
+            "apply ",
+            "employ "
+        ],
+        "category": "power_word"
+    },
+    {
+        "name": "Not just X but Y",
+        "regex": "\\bit'?s\\s+not\\s+just\\s+(about\\s+)?([^;,]+)[;,]\\s+it'?s\\s+(also\\s+)?(about\\s+)?",
+        "replacements": [
+            "it includes $2 and "
+        ],
+        "category": "formulaic"
+    },
+    {
+        "name": "Whether X or Y",
+        "regex": "\\bwhether\\s+it'?s\\s+([^,]+),?\\s+or\\s+([^,]+),\\s+",
+        "replacements": [
+            "from $1 to $2, ",
+            ""
+        ],
+        "category": "formulaic"
+    }
+]

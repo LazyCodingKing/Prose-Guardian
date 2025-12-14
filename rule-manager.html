@@ -1,0 +1,189 @@
+<div class="asf-rule-manager">
+    <h3>AI Slop Fixer - Rule Manager</h3>
+
+    <div class="asf-tabs">
+        <button class="asf-tab active" data-tab="learned">Learned Rules (<span id="asf_learned_count">0</span>)</button>
+        <button class="asf-tab" data-tab="builtin">Built-in Patterns (<span id="asf_builtin_count">0</span>)</button>
+    </div>
+
+    <div class="asf-tab-content">
+        <!-- Learned Rules Tab -->
+        <div id="asf_learned_tab" class="asf-tab-panel active">
+            <div class="asf-actions">
+                <button id="asf_export_learned" class="menu_button">📤 Export Rules</button>
+                <button id="asf_import_learned" class="menu_button">📥 Import Rules</button>
+                <button id="asf_clear_all_learned" class="menu_button caution">🗑️ Clear All</button>
+            </div>
+            <div id="asf_learned_list" class="asf-rules-list"></div>
+        </div>
+
+        <!-- Built-in Patterns Tab -->
+        <div id="asf_builtin_tab" class="asf-tab-panel">
+            <div class="asf-info">
+                <small>These are the default AI slop patterns. They cannot be edited or deleted.</small>
+            </div>
+            <div id="asf_builtin_list" class="asf-rules-list"></div>
+        </div>
+    </div>
+
+    <div class="asf-modal-footer">
+        <button id="asf_close_manager" class="menu_button">Close</button>
+    </div>
+</div>
+
+<style>
+    .asf-rule-manager {
+        background: var(--SmartThemeBlurTintColor);
+        border: 1px solid var(--SmartThemeBorderColor);
+        border-radius: 10px;
+        padding: 20px;
+        max-width: 800px;
+        max-height: 80vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .asf-rule-manager h3 {
+        margin: 0 0 15px 0;
+        color: var(--SmartThemeBodyColor);
+    }
+
+    .asf-tabs {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 15px;
+        border-bottom: 2px solid var(--SmartThemeBorderColor);
+    }
+
+    .asf-tab {
+        background: transparent;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+        color: var(--SmartThemeBodyColor);
+        opacity: 0.6;
+        transition: all 0.2s;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+    }
+
+    .asf-tab:hover {
+        opacity: 0.8;
+    }
+
+    .asf-tab.active {
+        opacity: 1;
+        border-bottom-color: var(--SmartThemeQuoteColor);
+    }
+
+    .asf-tab-content {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .asf-tab-panel {
+        display: none;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .asf-tab-panel.active {
+        display: flex;
+    }
+
+    .asf-actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+    }
+
+    .asf-info {
+        padding: 10px;
+        background: var(--black30alpha);
+        border-radius: 5px;
+        margin-bottom: 15px;
+        opacity: 0.8;
+    }
+
+    .asf-rules-list {
+        flex: 1;
+        overflow-y: auto;
+        border: 1px solid var(--SmartThemeBorderColor);
+        border-radius: 5px;
+        padding: 10px;
+        background: var(--black10alpha);
+    }
+
+    .asf-rule-item {
+        background: var(--SmartThemeBlurTintColor);
+        border: 1px solid var(--SmartThemeBorderColor);
+        border-radius: 5px;
+        padding: 12px;
+        margin-bottom: 10px;
+        transition: all 0.2s;
+    }
+
+    .asf-rule-item:hover {
+        background: var(--black30alpha);
+    }
+
+    .asf-rule-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+    }
+
+    .asf-rule-pattern {
+        font-family: monospace;
+        background: var(--black30alpha);
+        padding: 5px 8px;
+        border-radius: 3px;
+        flex: 1;
+        word-break: break-all;
+        margin-right: 10px;
+    }
+
+    .asf-rule-actions {
+        display: flex;
+        gap: 5px;
+    }
+
+    .asf-rule-btn {
+        background: var(--SmartThemeBlurTintColor);
+        border: 1px solid var(--SmartThemeBorderColor);
+        padding: 4px 8px;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.2s;
+    }
+
+    .asf-rule-btn:hover {
+        background: var(--SmartThemeQuoteColor);
+    }
+
+    .asf-rule-stats {
+        font-size: 12px;
+        opacity: 0.7;
+        display: flex;
+        gap: 15px;
+    }
+
+    .asf-modal-footer {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid var(--SmartThemeBorderColor);
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .caution {
+        background: var(--SmartThemeQuoteColor) !important;
+    }
+</style>

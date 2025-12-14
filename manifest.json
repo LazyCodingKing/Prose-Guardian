@@ -1,0 +1,15 @@
+{
+    "display_name": "Prose Guardian",
+    "author": "Raja (via Antigravity)",
+    "version": "2.0.0",
+    "description": "ProactiveAI writing enhancement: instant regex fixes (Module A), background pattern learning (Module B), and preventative prompt injection (Module C). Enforces quality constraints and eliminates AI slop before it happens.",
+    "requires": [],
+    "optional": [
+        "connectionManager"
+    ],
+    "js": "index.js",
+    "css": "style.css",
+    "homePage": "",
+    "loading_order": 1000,
+    "auto_update": false
+}
