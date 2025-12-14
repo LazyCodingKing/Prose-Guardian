@@ -25,7 +25,7 @@ export class PassiveWatcher {
             slopThreshold: 5.0,
             pruningCycle: 20,
             patternMinCommon: 2,
-            messagesToAnalyze: 20,
+            messagesToAnalyze: options.analysisWindow || 20, // Customizable!
             ...options
         };
 
@@ -260,6 +260,15 @@ export class PassiveWatcher {
     }
 
     /**
+     * Update analysis window size
+     * @param {Number} windowSize - Number of messages to analyze
+     */
+    setAnalysisWindow(windowSize) {
+        this.settings.messagesToAnalyze = windowSize;
+        console.log(`[PassiveWatcher] Analysis window updated to ${windowSize} messages`);
+    }
+
+    /**
      * Analyze chat history (batch processing)
      * @param {Array} messages - Array of message objects
      * @returns {Object} - Analysis results
@@ -269,7 +278,7 @@ export class PassiveWatcher {
 
         const aiMessages = messages.filter(msg => !msg.is_user && msg.mes);
 
-        // Take last N messages
+        // Take last N messages (customizable)
         const recentMessages = aiMessages.slice(-this.settings.messagesToAnalyze);
 
         recentMessages.forEach(msg => {

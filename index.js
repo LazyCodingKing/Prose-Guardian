@@ -11,6 +11,7 @@ import { ConnectionManagerRequestService } from '../../shared.js';
 import StaticFixer from './static-fixer.js';
 import PassiveWatcher from './passive-watcher.js';
 import ProactiveInjector from './proactive-injector.js';
+import { AIRegexGenerator } from './ai-regex-generator.js';
 
 const EXTENSION_NAME = 'Prose-Guardian';
 const LOG_PREFIX = `[${EXTENSION_NAME}]`;
@@ -65,12 +66,25 @@ const defaultSettings = {
     // Prompt Injection (Prevention Mode)
     enablePromptInjection: true,
     promptInjectionPosition: 'system',  // 'system', 'after_scenario', 'before_user'
-    preventionInstructions: `Write naturally and avoid these common AI writing patterns:
+    // Prevention Instructions
+    preventionInstructions: `Avoid these common AI writing patterns:
 - Repetitive phrases like "her heart raced", "breath hitched", "eyes widened"
 - Overused emotional beats and physical reactions  
 - Purple prose and excessive metaphors
 - Predictable dialogue patterns
+
 Keep your writing fresh, varied, and human.`,
+
+    // Custom Blocked Phrases (user-managed blacklist)
+    customBlockedPhrases: [], // Array of {phrase: string, addedDate: string}
+
+    // AI-Generated Dynamic Rules (Module D)
+    dynamicRules: [], // AI-generated regex rules
+    enableAutoGeneration: false, // Auto-generate after threshold
+    autoGenerationThreshold: 10, // How many detected phrases trigger auto-gen
+
+    // Module B (Passive Watcher) Settings
+    moduleBAnalysisWindow: 20, // Number of messages to analyze
 
     // UI/UX Settings
     autoMode: true,  // Auto-apply changes without user approval
@@ -100,6 +114,17 @@ let currentDiagnostic = {
     timestamp: null,
     modesUsed: []
 };
+
+// Initialize Module D (AI Regex Generator)
+let AIGenerator = null;
+
+function initializeAIGenerator() {
+    if (!AIGenerator) {
+        AIGenerator = new AIRegexGenerator(settings, saveSettings, showNotification);
+        console.log(`${LOG_PREFIX} Module D (AI Regex Generator) initialized`);
+    }
+    return AIGenerator;
+}
 
 function addDebugLog(message) {
     if (!settings.debugMode) return;
@@ -772,16 +797,6 @@ async function processMessage(messageId) {
             currentDiagnostic.tokenCount = Math.ceil(wordCount * 1.3);
 
             addDebugLog(`Quality Mode: AI rewrite complete(est.${currentDiagnostic.tokenCount} tokens)`);
-
-            // LEARNING MODE: Extract patterns from this rewrite
-            if (settings.learningEnabled) {
-                addDebugLog('Learning Mode: Analyzing rewrite for patterns');
-                const extractedPatterns = extractPatterns(currentDiagnostic.originalText, currentText);
-                if (extractedPatterns.length > 0) {
-                    addDebugLog(`Learning Mode: Found ${extractedPatterns.length} pattern candidates`);
-                    learnFromPatterns(extractedPatterns);
-                }
-            }
         } else {
             addDebugLog('Quality Mode: No violations detected');
         }
@@ -1414,43 +1429,6 @@ function bindSettingsHandlers() {
         showNotification(`Exported ${diagnosticsHistory.length} runs as ${filename}`, 'success');
     });
 
-    // Learning Mode handlers
-    $('#asf_learning_enabled').on('change', function () {
-        settings.learningEnabled = $(this).prop('checked');
-        saveSettings();
-    });
-
-    $('#asf_learn_threshold').on('input', function () {
-        settings.learnThreshold = parseInt($(this).val());
-        saveSettings();
-    });
-
-    $('#asf_max_learned').on('input', function () {
-        settings.maxLearnedRules = parseInt($(this).val());
-        saveSettings();
-    });
-
-    $('#asf_auto_apply_learned').on('change', function () {
-        settings.autoApplyLearned = $(this).prop('checked');
-        saveSettings();
-    });
-
-    $('#asf_view_rules').on('click', function () {
-        showRuleManager();
-    });
-
-    $('#asf_clear_learned').on('click', async function () {
-        const confirmed = confirm(`Clear all ${settings.learnedRules.length} learned rules?`);
-        if (confirmed) {
-            settings.learnedRules = [];
-            patternOccurrences.clear();
-            saveSettings();
-            await reloadAllPatterns();
-            applySettingsToUI();
-            console.log(`${LOG_PREFIX} Cleared all learned rules`);
-        }
-    });
-
     // Prompt Injection settings
     $('#asf_enable_injection').on('change', function () {
         settings.enablePromptInjection = $(this).prop('checked');
@@ -1465,6 +1443,266 @@ function bindSettingsHandlers() {
     $('#asf_prevention_instructions').on('change', function () {
         settings.preventionInstructions = $(this).val();
         saveSettings();
+    });
+
+    // Custom Phrase Blacklist handlers
+    $('#asf_add_custom_phrase').on('click', function () {
+        const phrase = $('#asf_custom_phrase_input').val().trim();
+        if (!phrase) {
+            showNotification('Please enter a phrase to block', 'warning');
+            return;
+        }
+
+        // Check if already exists
+        if (settings.customBlockedPhrases.some(p => p.phrase.toLowerCase() === phrase.toLowerCase())) {
+            showNotification('This phrase is already blocked', 'warning');
+            return;
+        }
+
+        // Add to list
+        settings.customBlockedPhrases.push({
+            phrase: phrase,
+            addedDate: new Date().toISOString()
+        });
+
+        saveSettings();
+        $('#asf_custom_phrase_input').val(''); // Clear input
+        renderCustomPhraseList();
+        showNotification(`Blocked "${phrase}"`, 'success');
+        console.log(`${LOG_PREFIX} Added custom blocked phrase: "${phrase}"`);
+    });
+
+    // Allow Enter key to add phrase
+    $('#asf_custom_phrase_input').on('keypress', function (e) {
+        if (e.which === 13) { // Enter key
+            $('#asf_add_custom_phrase').click();
+            e.preventDefault();
+        }
+    });
+
+    $('#asf_clear_custom_phrases').on('click', function () {
+        if (!confirm(`Delete all ${settings.customBlockedPhrases.length} custom blocked phrases?`)) return;
+        settings.customBlockedPhrases = [];
+        saveSettings();
+        renderCustomPhraseList();
+        showNotification('Cleared all custom phrases', 'info');
+        console.log(`${LOG_PREFIX} Cleared all custom blocked phrases`);
+    });
+
+    // Import custom phrases from text file
+    $('#asf_import_custom_phrases').on('click', async function () {
+        // Create hidden file input
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.txt';
+
+        input.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                const lines = text.split(/\r?\n/) // Handle both Windows (\r\n) and Unix (\n) line endings
+                    .map(line => line.trim())
+                    .filter(line => line.length > 0);
+
+                let added = 0;
+                let skipped = 0;
+
+                lines.forEach(phrase => {
+                    // Check if already exists
+                    if (settings.customBlockedPhrases.some(p => p.phrase.toLowerCase() === phrase.toLowerCase())) {
+                        skipped++;
+                        return;
+                    }
+
+                    settings.customBlockedPhrases.push({
+                        phrase: phrase,
+                        addedDate: new Date().toISOString()
+                    });
+                    added++;
+                });
+
+                saveSettings();
+                renderCustomPhraseList();
+                showNotification(`Added ${added} phrases${skipped > 0 ? `, skipped ${skipped} duplicates` : ''}`, 'success');
+                console.log(`${LOG_PREFIX} Imported ${added} custom phrases from file (${skipped} duplicates skipped)`);
+            } catch (err) {
+                showNotification(`Import failed: ${err.message}`, 'error');
+                console.error(`${LOG_PREFIX} Import error:`, err);
+            }
+        };
+
+        input.click();
+    });
+
+    // Export custom phrases to text file
+    $('#asf_export_custom_phrases').on('click', function () {
+        if (settings.customBlockedPhrases.length === 0) {
+            showNotification('No phrases to export', 'warning');
+            return;
+        }
+
+        const text = settings.customBlockedPhrases.map(p => p.phrase).join('\n');
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `prose-guardian-blocked-phrases-${Date.now()}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showNotification(`Exported ${settings.customBlockedPhrases.length} phrases`, 'success');
+        console.log(`${LOG_PREFIX} Exported ${settings.customBlockedPhrases.length} custom phrases`);
+    });
+
+    // ===========================
+    // Module D: AI Regex Generator Handlers
+    // ===========================
+
+    // Module B analysis window
+    $('#asf_module_b_window').on('change', function () {
+        const window = parseInt($(this).val());
+        if (window >= 10 && window <= 100) {
+            settings.moduleBAnalysisWindow = window;
+            PassiveWatcher.setAnalysisWindow(window);
+            saveSettings();
+            console.log(`${LOG_PREFIX} Module B analysis window updated to ${window}`);
+        }
+    });
+
+    // Generate rules from detected phrases
+    $('#asf_generate_rules').on('click', async function () {
+        const generator = initializeAIGenerator();
+        const $btn = $(this);
+        const originalText = $btn.html();
+
+        try {
+            // Disabled during generation
+            $btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin"></i> Generating...');
+
+            // Get detected phrases from Module B
+            const detectedPhrases = PassiveWatcher.getOverusedPhrases();
+
+            if (detectedPhrases.length === 0) {
+                showNotification('No patterns detected yet. Chat more to gather data!', 'info');
+                return;
+            }
+
+            // Generate rules
+            const count = await generator.generateRulesFromPhrases(detectedPhrases);
+
+            if (count > 0) {
+                // Reload Module A with new rules
+                await reloadModuleA();
+                renderDynamicRulesList();
+                updateDynamicRulesCount();
+            }
+
+        } catch (error) {
+            console.error(`${LOG_PREFIX} Generation error:`, error);
+            showNotification(`Generation failed: ${error.message}`, 'error');
+        } finally {
+            $btn.prop('disabled', false).html(originalText);
+        }
+    });
+
+    // Manual add rule
+    $('#asf_add_manual_rule').on('click', function () {
+        const generator = initializeAIGenerator();
+        const name = $('#asf_manual_rule_name').val().trim();
+        const regex = $('#asf_manual_rule_regex').val().trim();
+        const replacement = $('#asf_manual_rule_replacement').val().trim();
+
+        if (!name || !regex || !replacement) {
+            showNotification('All fields are required', 'warning');
+            return;
+        }
+
+        const success = generator.addRule({
+            scriptName: name,
+            findRegex: regex,
+            replaceString: replacement
+        });
+
+        if (success) {
+            // Clear form
+            $('#asf_manual_rule_name').val('');
+            $('#asf_manual_rule_regex').val('');
+            $('#asf_manual_rule_replacement').val('');
+
+            renderDynamicRulesList();
+            updateDynamicRulesCount();
+            reloadModuleA(); // Reload Module A
+            showNotification(`Added rule: "${name}"`, 'success');
+        }
+    });
+
+    // Import dynamic rules
+    $('#asf_import_dynamic_rules').on('click', async function () {
+        const generator = initializeAIGenerator();
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+
+        input.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                const count = generator.importRules(text);
+
+                if (count > 0) {
+                    renderDynamicRulesList();
+                    updateDynamicRulesCount();
+                    reloadModuleA(); // Reload Module A
+                }
+            } catch (err) {
+                showNotification(`Import failed: ${err.message}`, 'error');
+            }
+        };
+
+        input.click();
+    });
+
+    // Export dynamic rules
+    $('#asf_export_dynamic_rules').on('click', function () {
+        const generator = initializeAIGenerator();
+        const json = generator.exportRules();
+
+        if (json) {
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `prose-guardian-dynamic-rules-${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showNotification('Rules exported!', 'success');
+        }
+    });
+
+    // Clear all dynamic rules
+    $('#asf_clear_dynamic_rules').on('click', function () {
+        if (!settings.dynamicRules || settings.dynamicRules.length === 0) {
+            showNotification('No dynamic rules to clear', 'info');
+            return;
+        }
+
+        if (!confirm(`Delete all ${settings.dynamicRules.length} AI-generated rules?`)) return;
+
+        const generator = initializeAIGenerator();
+        generator.clearDynamicRules();
+        renderDynamicRulesList();
+        updateDynamicRulesCount();
+        reloadModuleA(); // Reload Module A
+        showNotification('Cleared all dynamic rules', 'info');
     });
 
     // Auto-mode setting
@@ -1701,12 +1939,11 @@ async function showRuleManager() {
         input.click();
     });
 
-    // Clear all learned rules
     $('#asf_clear_all_learned').on('click', () => {
         if (!confirm(`Delete all ${settings.learnedRules.length} learned rules?`)) return;
         settings.learnedRules = [];
         saveSettings();
-        reloadAllPatterns();
+        // Pattern reloading handled by Module A
         renderLearnedRulesList();
         $('#asf_learned_count').text(0);
         console.log(`${LOG_PREFIX} Cleared all learned rules`);
@@ -1755,7 +1992,7 @@ function renderLearnedRulesList() {
 
         settings.learnedRules.splice(index, 1);
         saveSettings();
-        reloadAllPatterns();
+        // Pattern reloading handled by Module A
         renderLearnedRulesList();
         $('#asf_learned_count').text(settings.learnedRules.length);
         console.log(`${LOG_PREFIX} Deleted learned rule`);
@@ -1766,15 +2003,23 @@ function renderBuiltinRulesList() {
     const $list = $('#asf_builtin_list');
     $list.empty();
 
-    slopPatterns.forEach((pattern) => {
+    // Get rules from Module A (Static Fixer)
+    const rules = StaticFixer.rules;
+
+    if (!rules || rules.length === 0) {
+        $list.html('<div style="text-align:center;opacity:0.6;padding:20px;">No patterns loaded</div>');
+        return;
+    }
+
+    rules.forEach((rule) => {
         const $item = $(`
             <div class="asf-rule-item">
                 <div class="asf-rule-header">
-                    <div class="asf-rule-pattern">${escapeHtml(pattern.regex)}</div>
+                    <div class="asf-rule-pattern">${escapeHtml(rule.findRegex || rule.regex || 'No pattern')}</div>
                 </div>
                 <div class="asf-rule-stats">
-                    <span>${pattern.name}</span>
-                    <span>${pattern.replacements ? pattern.replacements.length + ' replacements' : 'No replacements'}</span>
+                    <span>${escapeHtml(rule.scriptName || rule.name || 'Unnamed')}</span>
+                    <span>${rule.category || 'Uncategorized'}</span>
                 </div>
             </div>
         `);
@@ -1788,113 +2033,138 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-function renderLearnedRules() {
-    const $list = $('#asf_learned_rules_list');
+// Render custom phrase blacklist
+function renderCustomPhraseList() {
+    const $list = $('#asf_custom_phrase_list');
+    const $count = $('#asf_custom_phrase_count');
+
+    $count.text(settings.customBlockedPhrases.length);
     $list.empty();
 
-    if (settings.learnedRules.length === 0) {
-        $list.html('<small style="opacity: 0.7;">No learned rules yet</small>');
+    if (settings.customBlockedPhrases.length === 0) {
+        $list.html('<small style="opacity: 0.7;">No custom phrases blocked yet</small>');
         return;
     }
 
-    settings.learnedRules.forEach((rule, index) => {
-        const $rule = $(`
-            <div class="rule-item" style="border: 1px solid var(--SmartThemeBorderColor); padding: 10px; margin: 5px 0; border-radius: 5px;">
-                <div style="display: flex; justify-content: space-between; align-items: start;">
-                    <div style="flex: 1;">
-                        <code style="background: var(--black30alpha); padding: 2px 5px; border-radius: 3px;">${rule.pattern}</code>
-                        <div style="margin-top: 5px;">
-                            <small><strong>Replace with:</strong> ${rule.replacement || '(remove)'}</small><br>
-                            <small><strong>Occurrences:</strong> ${rule.occurrences} | <strong>Created:</strong> ${new Date(rule.dateCreated).toLocaleDateString()}</small>
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 5px;">
-                        <button class="menu_button toggle-rule" data-index="${index}" title="${rule.enabled ? 'Disable' : 'Enable'}">
-                            <i class="fa-solid fa-${rule.enabled ? 'toggle-on' : 'toggle-off'}"></i>
-                        </button>
-                        <button class="menu_button delete-rule" data-index="${index}" title="Delete">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
+    settings.customBlockedPhrases.forEach((item, index) => {
+        const $phraseItem = $(`
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px; margin: 3px 0; background: var(--SmartThemeBlurTintColor); border-radius: 3px;">
+                <span style="font-family: monospace;">${escapeHtml(item.phrase)}</span>
+                <button class="menu_button delete-custom-phrase" data-index="${index}" title="Remove this phrase">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
             </div>
         `);
-
-        $list.append($rule);
+        $list.append($phraseItem);
     });
 
-    // Event handlers for rule buttons
-    $('.toggle-rule').on('click', function () {
+    // Bind delete handlers
+    $('.delete-custom-phrase').on('click', function () {
         const index = parseInt($(this).data('index'));
-        settings.learnedRules[index].enabled = !settings.learnedRules[index].enabled;
-        saveSettings();
-        reloadAllPatterns();
-        renderLearnedRules();
-    });
+        const phrase = settings.customBlockedPhrases[index].phrase;
 
-    $('.delete-rule').on('click', function () {
-        const index = parseInt($(this).data('index'));
-        if (confirm(`Delete this learned rule?`)) {
-            settings.learnedRules.splice(index, 1);
-            saveSettingsDebounced();
-            // No need to reload patterns - Module A handles this
-            renderLearnedRules();
-            $('#asf_learned_rules_count').text(settings.learnedRules.length);
-            $('#asf_learned_count').text(settings.learnedRules.length);
+        if (confirm(`Remove "${phrase}" from blacklist?`)) {
+            settings.customBlockedPhrases.splice(index, 1);
+            saveSettings();
+            renderCustomPhraseList();
+            showNotification(`Removed "${phrase}"`, 'info');
+            console.log(`${LOG_PREFIX} Removed custom blocked phrase: "${phrase}"`);
         }
     });
 }
 
-function renderBuiltinRules() {
-    const $list = $('#asf_builtin_rules_list');
+// ===========================
+// Dynamic Rules Rendering (Module D)
+// ===========================
+
+function renderDynamicRulesList() {
+    const $list = $('#asf_dynamic_rules_list');
+    const rules = settings.dynamicRules || [];
+
     $list.empty();
 
-    slopPatterns.forEach(rule => {
-        const $rule = $(`
-            <div class="rule-item" style="border: 1px solid var(--SmartThemeBorderColor); padding: 10px; margin: 5px 0; border-radius: 5px; opacity: 0.8;">
-                <code style="background: var(--black30alpha); padding: 2px 5px; border-radius: 3px;">${rule.pattern}</code>
-                <div style="margin-top: 5px;">
-                    <small><strong>Replace with:</strong> ${rule.replacement || '(remove)'}</small><br>
-                    <small><strong>Category:</strong> ${rule.category}</small>
+    if (rules.length === 0) {
+        $list.html('<small style="opacity: 0.7;">No AI-generated rules yet. Click "Generate Rules" to create them!</small>');
+        return;
+    }
+
+    rules.forEach((rule, index) => {
+        const isDisabled = rule.disabled || false;
+        const source = rule.isAI ? '🤖 AI' : rule.isManual ? '✏️ Manual' : rule.isImported ? '📥 Imported' : '❓';
+
+        const $ruleItem = $(`
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; margin: 5px 0; background: var(--SmartThemeBlurTintColor); border-radius: 5px; opacity: ${isDisabled ? 0.5 : 1};">
+                <div style="flex: 1;">
+                    <div style="font-weight: bold; ${isDisabled ? 'text-decoration: line-through;' : ''}">
+                        ${escapeHtml(rule.scriptName || 'Unnamed Rule')}
+                    </div>
+                    <div style="font-size: 0.85em; opacity: 0.8; font-family: monospace; margin-top: 3px;">
+                        ${escapeHtml(rule.findRegex).substring(0, 60)}${rule.findRegex.length > 60 ? '...' : ''}
+                    </div>
+                    <div style="font-size: 0.75em; opacity: 0.6; margin-top: 2px;">
+                        ${source} • ${rule.replaceString ? rule.replaceString.split(',').length : 0} alternatives
+                    </div>
+                </div>
+                <div style="display: flex; gap: 5px;">
+                    <button class="menu_button toggle-dynamic-rule" data-id="${rule.id}" 
+                        title="${isDisabled ? 'Enable' : 'Disable'} this rule">
+                        <i class="fa-solid fa-${isDisabled ? 'eye' : 'eye-slash'}"></i>
+                    </button>
+                    <button class="menu_button delete-dynamic-rule" data-id="${rule.id}" 
+                        title="Delete this rule">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
                 </div>
             </div>
         `);
+        $list.append($ruleItem);
+    });
 
-        $list.append($rule);
+    // Bind toggle handlers
+    $('.toggle-dynamic-rule').on('click', function () {
+        const id = $(this).data('id');
+        const rule = rules.find(r => r.id === id);
+        if (rule) {
+            rule.disabled = !rule.disabled;
+            saveSettings();
+            renderDynamicRulesList();
+            reloadModuleA(); // Reload Module A
+            console.log(`${LOG_PREFIX} Toggled rule: "${rule.scriptName}" (${rule.disabled ? 'disabled' : 'enabled'})`);
+        }
+    });
+
+    // Bind delete handlers
+    $('.delete-dynamic-rule').on('click', function () {
+        const id = $(this).data('id');
+        const rule = rules.find(r => r.id === id);
+
+        if (rule && confirm(`Delete rule "${rule.scriptName}"?`)) {
+            const generator = initializeAIGenerator();
+            generator.deleteRule(id);
+            renderDynamicRulesList();
+            updateDynamicRulesCount();
+            reloadModuleA(); // Reload Module A
+            showNotification(`Deleted "${rule.scriptName}"`, 'info');
+        }
     });
 }
 
-function exportRules() {
-    const data = JSON.stringify(settings.learnedRules, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'ai-slopfixer-learned-rules.json';
-    a.click();
-    URL.revokeObjectURL(url);
-    console.log(`${LOG_PREFIX} Exported ${settings.learnedRules.length} learned rules`);
+function updateDynamicRulesCount() {
+    const count = (settings.dynamicRules || []).length;
+    $('#asf_dynamic_rules_count').text(count);
+
+    // Also update detectable count from Module B
+    const detected = PassiveWatcher.getOverusedPhrases();
+    $('#asf_detectable_count').text(detected.length);
 }
 
-async function importRules() {
-    const json = await callGenericPopup('Paste exported rules JSON:', POPUP_TYPE.INPUT, '');
-    if (!json) return;
-
-    try {
-        const imported = JSON.parse(json);
-        if (!Array.isArray(imported)) throw new Error('Invalid format');
-
-        settings.learnedRules.push(...imported);
-        saveSettings();
-        await reloadAllPatterns();
-        renderLearnedRules();
-        $('#asf_learned_rules_count').text(settings.learnedRules.length);
-        console.log(`${LOG_PREFIX} Imported ${imported.length} rules`);
-    } catch (error) {
-        alert('Invalid JSON format');
-        console.error(`${LOG_PREFIX} Import failed:`, error);
-    }
+// Helper to reload Module A with both static and dynamic rules
+async function reloadModuleA() {
+    const rulesPath = `scripts/extensions/third-party/${EXTENSION_NAME}/regex_rules.json`;
+    const dynamicRules = settings.dynamicRules || [];
+    await StaticFixer.loadRules(rulesPath, dynamicRules);
 }
+
 
 // Save settings to storage
 function saveSettings() {
@@ -1956,6 +2226,19 @@ function applySettingsToUI() {
     // Update counts
     $('#asf_learned_rules_count').text(settings.learnedRules.length);
     updatePresetDropdown();
+
+    // Update Module B count
+    const overusedPhrases = PassiveWatcher.getOverusedPhrases();
+    $('#asf_module_b_count').text(overusedPhrases.length);
+
+    // Render custom phrase list
+    renderCustomPhraseList();
+
+    // Module D: Render dynamic rules and counts
+    $('#asf_module_b_window').val(settings.moduleBAnalysisWindow || 20);
+    PassiveWatcher.setAnalysisWindow(settings.moduleBAnalysisWindow || 20);
+    renderDynamicRulesList();
+    updateDynamicRulesCount();
 }
 
 // Register Slash Command
@@ -2006,7 +2289,9 @@ jQuery(async () => {
 
         // Module A: Static Fixer
         try {
-            await StaticFixer.loadRules(`scripts/extensions/third-party/${EXTENSION_NAME}/regex_rules.json`);
+            // Initialize Module A (Static Fixer)
+            console.log(`${LOG_PREFIX} Initializing Module A...`);
+            await reloadModuleA();
             console.log(`${LOG_PREFIX} Module A (Static Fixer) initialized:`, StaticFixer.getStats());
         } catch (error) {
             console.warn(`${LOG_PREFIX} Failed to load regex_rules.json, Module A disabled:`, error.message);
@@ -2096,23 +2381,56 @@ jQuery(async () => {
             // Existing static injection
             injectAntiSlopPrompt();
 
-            // FIX #1 BONUS: Module C - Dynamic proactive injection
-            // Update with latest overused phrases from Module B
+            // Module C - Dynamic proactive injection
+            // Get overused phrases from Module B
             const overused = PassiveWatcher.getOverusedPhrases();
-            if (overused.length > 0) {
-                ProactiveInjector.updateOverusedPhrases(overused);
+
+            // Get custom blocked phrases from user
+            const context = getContext();
+            const characterName = context.name2 || 'Character';
+            const userName = context.name1 || 'User';
+
+            // CRITICAL FIX: Filter out character names from custom phrases
+            // Telling AI to "avoid character names" causes backfire effect!
+            const customPhrases = settings.customBlockedPhrases
+                .filter(p => {
+                    const phraseLower = p.phrase.toLowerCase();
+                    const charLower = characterName.toLowerCase();
+                    const userLower = userName.toLowerCase();
+
+                    // Skip if phrase IS or CONTAINS the character/user name
+                    if (phraseLower === charLower || phraseLower === userLower) {
+                        console.log(`${LOG_PREFIX} ⚠️ Skipping character name from blacklist: "${p.phrase}"`);
+                        return false;
+                    }
+                    if (phraseLower.includes(charLower) || phraseLower.includes(userLower)) {
+                        console.log(`${LOG_PREFIX} ⚠️ Skipping phrase containing character name: "${p.phrase}"`);
+                        return false;
+                    }
+                    return true;
+                })
+                .map(p => ({
+                    phrase: p.phrase,
+                    score: 10.0, // High score since user explicitly blocked it
+                    count: 999   // Ensure it's prioritized
+                }));
+
+            // Combine both lists (Module B + filtered custom phrases)
+            const allBlockedPhrases = [...overused, ...customPhrases];
+
+            if (allBlockedPhrases.length > 0) {
+                ProactiveInjector.updateOverusedPhrases(allBlockedPhrases);
 
                 // Try to inject (will be added to prompt if phrases detected)
-                const context = getContext();
                 const injected = await ProactiveInjector.injectInstructions(context);
 
                 if (injected) {
-                    console.log(`${LOG_PREFIX} ✓ Module C: Proactive injection added (${overused.length} phrases)`);
+                    console.log(`${LOG_PREFIX} ✓ Module C: Proactive injection added (${overused.length} detected + ${customPhrases.length} custom = ${allBlockedPhrases.length} total phrases)`);
                 } else {
-                    console.log(`${LOG_PREFIX} Module C: Injection skipped (no phrases or injection failed)`);
+                    console.log(`${LOG_PREFIX} Module C: Injection skipped (injection failed)`);
                 }
             } else {
-                console.log(`${LOG_PREFIX} Module C: No overused phrases detected yet`);
+                console.log(`${LOG_PREFIX} Module C: No phrases to block`);
             }
         }
     });

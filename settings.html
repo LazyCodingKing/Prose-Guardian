@@ -6,13 +6,13 @@
         </div>
         <div class="inline-drawer-content">
 
-            <!-- Fast Mode -->
-            <h4>⚡ Fast Mode (Instant Regex Cleanup)</h4>
+            <!-- Module A: Fast Mode -->
+            <h4>⚡ Module A: Static Fixer (Fast Mode)</h4>
             <label class="checkbox_label" for="asf_fast_mode">
                 <input type="checkbox" id="asf_fast_mode" />
-                <span>Enable instant slop cleanup</span>
+                <span>Enable instant regex cleanup</span>
             </label>
-            <small>Uses regex to instantly replace common AI clichés with better alternatives</small>
+            <small>Uses 51 ProsePolisher regex patterns to instantly replace AI clichés (&lt; 5ms, zero tokens)</small>
 
             <hr>
 
@@ -120,45 +120,6 @@
                 <small>Save your current configuration with a custom name</small>
             </div>
 
-            <hr>
-
-            <!-- Learning Mode -->
-            <h4>🧠 Learning Mode</h4>
-
-            <label class="checkbox_label" for="asf_learning_enabled">
-                <input type="checkbox" id="asf_learning_enabled" />
-                <span>Enable Learning Mode</span>
-            </label>
-            <small>Automatically learn slop patterns from Quality Mode rewrites</small>
-
-            <label class="checkbox_label" for="asf_auto_apply_learned">
-                <input type="checkbox" id="asf_auto_apply_learned" />
-                <span>Auto-apply learned rules</span>
-            </label>
-
-            <div class="flex-container">
-                <label for="asf_learn_threshold">Auto-generate rule after</label>
-                <input type="number" id="asf_learn_threshold" class="text_pole" min="1" max="20" value="3" />
-                <span>occurrences</span>
-            </div>
-
-            <div class="flex-container">
-                <label for="asf_max_learned">Maximum learned rules</label>
-                <input type="number" id="asf_max_learned" class="text_pole" min="10" max="200" value="50" />
-            </div>
-
-            <div style="margin: 15px 0;">
-                <strong>Learned Rules: <span id="asf_learned_count">0</span></strong>
-                <button id="asf_view_rules" class="menu_button" style="margin-left: 10px;">
-                    <i class="fa-solid fa-list"></i> Manage Rules
-                </button>
-                <button id="asf_clear_learned" class="menu_button caution" title="Clear all learned rules">
-                    <i class="fa-solid fa-trash"></i> Clear All
-                </button>
-            </div>
-
-            <hr>
-
             <!-- UX Settings -->\n <h4>⚙️ UX Settings</h4>
 
             <label class="checkbox_label" for="asf_auto_mode">
@@ -170,14 +131,30 @@
 
             <hr>
 
-            <!-- Prevention Mode (Prompt Injection) -->
-            <h4>🛡️ Prevention Mode (Prompt Injection)</h4>
+            <!-- Module B: Passive Watcher (Background Learning) -->
+            <h4>🧠 Module B: Passive Watcher (Automatic)</h4>
+            <small>Automatically learns overused phrases in the background (always active, zero tokens)</small>
+
+            <div style="margin: 15px 0; padding: 10px; background: var(--black30alpha); border-radius: 5px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span><strong>Detected Overused Phrases:</strong></span>
+                    <span id="asf_module_b_count"
+                        style="font-size: 1.2em; font-weight: bold; color: var(--SmartThemeQuoteColor);">0</span>
+                </div>
+                <small style="opacity: 0.8;">Analyzes last 20 messages to detect repetitive patterns. Feeds Module C for
+                    prevention.</small>
+            </div>
+
+            <hr>
+
+            <!-- Module C: Proactive Injector (Prevention Mode) -->
+            <h4>🛡️ Module C: Proactive Injector (Prevention Mode)</h4>
 
             <label class="checkbox_label" for="asf_enable_injection">
                 <input type="checkbox" id="asf_enable_injection" />
                 <span>Enable Prevention Mode</span>
             </label>
-            <small>Inject anti-slop instructions before AI generates text</small>
+            <small>Injects anti-slop instructions BEFORE AI generates (uses Module B + custom blacklist)</small>
 
             <div style="margin: 10px 0;">
                 <label for="asf_injection_position">Injection Position:</label>
@@ -193,6 +170,128 @@
                 <textarea id="asf_prevention_instructions" class="text_pole" rows="6"
                     style="width: 100%; resize: vertical;"></textarea>
                 <small>Instructions shown to AI before generation. Learned patterns are automatically added!</small>
+            </div>
+
+            <hr>
+
+            <!-- Custom Phrase Blacklist -->
+            <h4>🚫 Custom Phrase Blacklist</h4>
+            <small>Manually block specific words/phrases from appearing in future AI messages</small>
+            <div
+                style="margin-top: 5px; padding: 8px; background: #5a3a3a; border-left: 3px solid #ff6b6b; border-radius: 3px;">
+                <small style="color: #ffcccc;">
+                    <strong>⚠️ Do NOT block character names!</strong> Blocking names like "Jensen", "Alex", etc. causes
+                    the AI to use them MORE (backfire effect). Only block writing patterns like "heart raced", "eyes
+                    widened".
+                </small>
+            </div>
+
+            <div style="margin: 15px 0;">
+                <div class="flex-container" style="gap: 5px;">
+                    <input type="text" id="asf_custom_phrase_input" class="text_pole"
+                        placeholder="Enter phrase to block (e.g., heart raced)" style="flex: 1;" />
+                    <button id="asf_add_custom_phrase" class="menu_button" title="Add phrase to blacklist">
+                        <i class="fa-solid fa-plus"></i> Add
+                    </button>
+                    <button id="asf_import_custom_phrases" class="menu_button"
+                        title="Import multiple phrases from text">
+                        <i class="fa-solid fa-file-import"></i> Import
+                    </button>
+                </div>
+            </div>
+
+            <div style="margin: 15px 0;">
+                <strong>Blocked Phrases: <span id="asf_custom_phrase_count">0</span></strong>
+                <button id="asf_export_custom_phrases" class="menu_button" title="Export phrases to text file"
+                    style="margin-left: 10px;">
+                    <i class="fa-solid fa-download"></i> Export
+                </button>
+                <button id="asf_clear_custom_phrases" class="menu_button caution"
+                    title="Clear all custom blocked phrases" style="margin-left: 5px;">
+                    <i class="fa-solid fa-trash"></i> Clear All
+                </button>
+            </div>
+
+            <div id="asf_custom_phrase_list" style="margin-top: 10px; max-height: 200px; overflow-y: auto;"></div>
+
+            <hr>
+
+            <!-- Module D: AI Regex Generation -->
+            <h4>🤖 AI-Powered Regex Generation (Module D)</h4>
+            <small>Automatically create professional regex rules from detected patterns using AI</small>
+
+            <!-- Module B Settings -->
+            <div style="margin: 15px 0;">
+                <label for="asf_module_b_window">Analysis Window (Module B messages):</label>
+                <div class="flex-container" style="gap: 10px; align-items: center;">
+                    <input type="number" id="asf_module_b_window" class="text_pole" min="10" max="100" value="20"
+                        style="width: 80px;" />
+                    <small>How many recent AI messages to analyze for patterns</small>
+                </div>
+            </div>
+
+            <!-- Generation Controls -->
+            <div style="margin: 15px 0;">
+                <button id="asf_generate_rules" class="menu_button"
+                    title="Use AI to generate regex rules from Module B's detected phrases">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Rules from Detected Phrases
+                </button>
+                <div style="margin-top: 5px;">
+                    <small>
+                        Detected patterns ready: <strong><span id="asf_detectable_count">0</span></strong>
+                        • Dynamic rules: <strong><span id="asf_dynamic_rules_count">0</span></strong>
+                    </small>
+                </div>
+            </div>
+
+            <!-- Manual Add Rule -->
+            <div style="margin: 15px 0;">
+                <details>
+                    <summary style="cursor: pointer; font-weight: bold;">➕ Manually Add Rule</summary>
+                    <div
+                        style="margin-top: 10px; padding: 10px; background: var(--SmartThemeBlurTintColor); border-radius: 5px;">
+                        <div style="margin: 8px 0;">
+                            <label>Rule Name:</label>
+                            <input type="text" id="asf_manual_rule_name" class="text_pole"
+                                placeholder="e.g., Slopfix - Heart Racing" />
+                        </div>
+                        <div style="margin: 8px 0;">
+                            <label>Regex Pattern:</label>
+                            <input type="text" id="asf_manual_rule_regex" class="text_pole"
+                                placeholder="e.g., \b([Hh]is|[Hh]er|[Tt]heir)\s+heart\s+(raced|pounded)\b" />
+                            <small>Use capture groups (...) for variations</small>
+                        </div>
+                        <div style="margin: 8px 0;">
+                            <label>Replacement (comma-separated alternatives):</label>
+                            <textarea id="asf_manual_rule_replacement" class="text_pole" rows="3"
+                                placeholder="{{random:$1 pulse quickened,$1 chest tightened,$1 heartbeat echoed,...}}"></textarea>
+                            <small>Format: {{random:alt1,alt2,alt3,...}} Use $1,$2 for capture groups</small>
+                        </div>
+                        <button id="asf_add_manual_rule" class="menu_button">
+                            <i class="fa-solid fa-plus"></i> Add Rule
+                        </button>
+                    </div>
+                </details>
+            </div>
+
+            <!-- Import/Export -->
+            <div style="margin: 15px 0;">
+                <button id="asf_import_dynamic_rules" class="menu_button" title="Import dynamic rules from JSON file">
+                    <i class="fa-solid fa-file-import"></i> Import Rules
+                </button>
+                <button id="asf_export_dynamic_rules" class="menu_button" title="Export dynamic rules to JSON file">
+                    <i class="fa-solid fa-download"></i> Export Rules
+                </button>
+                <button id="asf_clear_dynamic_rules" class="menu_button" title="Clear all AI-generated rules"
+                    style="background: #a34343;">
+                    <i class="fa-solid fa-trash"></i> Clear All
+                </button>
+            </div>
+
+            <!-- Dynamic Rules List -->
+            <div style="margin: 15px 0;">
+                <strong>Generated Rules:</strong>
+                <div id="asf_dynamic_rules_list" style="margin-top: 10px; max-height: 300px; overflow-y: auto;"></div>
             </div>
 
             <hr>

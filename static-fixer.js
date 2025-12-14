@@ -13,25 +13,33 @@ export class StaticFixer {
     }
 
     /**
-     * Load regex rules from a JSON file or array
-     * @param {Array|String} rulesSource - Array of rule objects or path to JSON file
+     * Load regex rules from JSON file and merge with dynamic rules from settings
+     * @param {String} rulesFilePath - Path to static rules JSON file
+     * @param {Array} dynamicRules - Array of AI-generated rules from settings (optional)
      */
-    async loadRules(rulesSource) {
-        if (typeof rulesSource === 'string') {
-            // Load from file path
+    async loadRules(rulesFilePath, dynamicRules = []) {
+        let staticRules = [];
+
+        if (rulesFilePath) {
+            // Load static rules from file
             try {
-                const response = await fetch(rulesSource);
-                this.rules = await response.json();
-                console.log(`[StaticFixer] Loaded ${this.rules.length} rules from ${rulesSource}`);
+                const response = await fetch(rulesFilePath);
+                staticRules = await response.json();
+                console.log(`[StaticFixer] Loaded ${staticRules.length} static rules from ${rulesFilePath}`);
             } catch (error) {
-                console.error('[StaticFixer] Failed to load rules:', error);
-                this.rules = [];
+                console.error('[StaticFixer] Failed to load static rules:', error);
+                staticRules = [];
             }
-        } else if (Array.isArray(rulesSource)) {
-            // Direct array of rules
-            this.rules = rulesSource;
-            console.log(`[StaticFixer] Loaded ${this.rules.length} rules from array`);
         }
+
+        // Merge static + dynamic rules
+        this.rules = [
+            ...staticRules.map(r => ({ ...r, isStatic: true })),
+            ...dynamicRules.filter(r => !r.disabled).map(r => ({ ...r, isStatic: false }))
+        ];
+
+        const dynamicCount = dynamicRules.filter(r => !r.disabled).length;
+        console.log(`[StaticFixer] Total rules: ${this.rules.length} (${staticRules.length} static + ${dynamicCount} dynamic)`);
     }
 
     /**
@@ -43,7 +51,8 @@ export class StaticFixer {
         if (!text || !this.enabled) return text;
 
         let processedText = text;
-        const enabledRules = this.rules.filter(rule => !rule.disabled && rule.isStatic);
+        // Apply both static and dynamic rules (filter out disabled)
+        const enabledRules = this.rules.filter(rule => !rule.disabled);
 
         enabledRules.forEach(rule => {
             try {
