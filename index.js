@@ -155,6 +155,54 @@ function saveDiagnosticToHistory() {
 }
 
 // -----------------------------------------------------------------------------
+// HELPER FUNCTIONS (Reduce Code Duplication)
+// -----------------------------------------------------------------------------
+
+/**
+ * Get AI message by ID with validation
+ * @param {number} messageId - Message ID
+ * @returns {Object|null} - Message object or null if not found/is user message
+ */
+function getAIMessage(messageId) {
+    const context = getContext();
+    if (!context || !context.chat) return null;
+    const message = context.chat[messageId];
+    return (message && !message.is_user && !message.is_system) ? message : null;
+}
+
+/**
+ * Get message DOM element with caching
+ * @param {number} messageId - Message ID
+ * @returns {jQuery} - jQuery element
+ */
+function getMessageElement(messageId) {
+    return $(`#chat .mes[mesid="${messageId}"]`);
+}
+
+/**
+ * Export content to downloadable text file
+ * @param {string} content - File content
+ * @param {string} filenamePrefix - Prefix for filename (timestamp will be added)
+ * @returns {string} - Generated filename
+ */
+function exportToFile(content, filenamePrefix) {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+    const filename = `${filenamePrefix}-${timestamp}.txt`;
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    return filename;
+}
+
+// -----------------------------------------------------------------------------
 // PROMPT INJECTION (Prevention Mode)
 // -----------------------------------------------------------------------------
 
@@ -562,6 +610,15 @@ When weaving strong mood, emotion, or psychological states, **enhance the text v
 `;
     }
 
+    // 6. Custom Blocked Phrases
+    let blockedPhrasesSection = '';
+    if (settings.customBlockedPhrases && settings.customBlockedPhrases.length > 0) {
+        const phrasesList = settings.customBlockedPhrases
+            .map(p => `"${p.phrase}"`)
+            .join(', ');
+        blockedPhrasesSection = `\n\n**BLOCKED PHRASES (MUST AVOID):**\nDo NOT use these exact words or phrases: ${phrasesList}\nFind alternative expressions or omit entirely.`;
+    }
+
     const prompt = `You are an expert Roleplay Director. Rewrite the text to be visceral, immersive, and strictly adhering to constraints.
 
 IDENTITY STRICTLY ENFORCED:
@@ -571,7 +628,7 @@ IDENTITY STRICTLY ENFORCED:
 CRITICAL RULES:
 1. NO IDENTITY THEFT: Never write thoughts, feelings, or dialogue for ${userName}.
 2. NO USER DIALOGUE: Do not make ${userName} speak.
-3. SHOW, DON'T TELL: Eliminate clichés like "heart raced" or "shivered". Use concrete physical details.
+3. SHOW, DON'T TELL: Eliminate clichés like "heart raced" or "shivered". Use concrete physical details.${blockedPhrasesSection}
 
 DETECTED ISSUES:
 ${violationsList}
@@ -587,6 +644,10 @@ ${formattingInstructions}
 TASK:
 Output ONLY the final rewritten story text. Do not provide analysis, <thinking> tags, or introductory remarks.`;
 
+    // Debug log blocked phrases if enabled
+    if (settings.customBlockedPhrases && settings.customBlockedPhrases.length > 0) {
+        addDebugLog(`Quality Mode: Blocking ${settings.customBlockedPhrases.length} custom phrase(s): ${settings.customBlockedPhrases.map(p => p.phrase).join(', ')}`);
+    }
 
     try {
         let result;
@@ -650,7 +711,7 @@ Output ONLY the final rewritten story text. Do not provide analysis, <thinking> 
 
 // Show processing overlay on a message
 function showProcessingOverlay(messageId) {
-    const $message = $(`#chat.mes[mesid = "${messageId}"]`);
+    const $message = getMessageElement(messageId);
     if ($message.length === 0) return;
 
     // Remove any existing overlay
@@ -703,7 +764,7 @@ function showProcessingOverlay(messageId) {
 
 // Hide processing overlay
 function hideProcessingOverlay(messageId) {
-    const $message = $(`#chat .mes[mesid="${messageId}"]`);
+    const $message = getMessageElement(messageId);
     $message.find('.asf-processing-overlay').fadeOut(300, function () {
         $(this).remove();
     });
@@ -716,9 +777,8 @@ function hideProcessingOverlay(messageId) {
 async function processMessage(messageId) {
     if (!isAppReady) return;
 
-    const context = getContext();
-    const message = context.chat[messageId];
-    if (!message || message.is_user) return;
+    const message = getAIMessage(messageId);
+    if (!message) return;
 
     // FIX #2: Prevent infinite render loop with session flag
     if (message.flags && message.flags.includes('slop_fixed')) {
@@ -728,7 +788,7 @@ async function processMessage(messageId) {
 
     // IMMEDIATE ACTION: Hide text to prevent FOUC (Flash of Unstyled Content)
     // This ensures the user never sees the original "slop" text during processing
-    const $message = $(`#chat .mes[mesid="${messageId}"]`);
+    const $message = getMessageElement(messageId);
     const $messageText = $message.find('.mes_text');
     $messageText.addClass('asf-processing-text asf-skeleton-pulse');
 
@@ -787,26 +847,29 @@ async function processMessage(messageId) {
             // Show processing overlay
             showProcessingOverlay(messageId);
 
+            // Start timing
+            const rewriteStartTime = performance.now();
+
             const beforeRewrite = currentText;
             currentText = await aiRewrite(currentText, violations);
             wasModified = true;
             currentDiagnostic.modesUsed.push('Quality Mode');
 
+            // Calculate rewrite duration
+            const rewriteEndTime = performance.now();
+            const rewriteDuration = ((rewriteEndTime - rewriteStartTime) / 1000).toFixed(2); // Convert to seconds
+
             // Rough token estimation (words * 1.3)
             const wordCount = beforeRewrite.split(/\s+/).length;
             currentDiagnostic.tokenCount = Math.ceil(wordCount * 1.3);
 
-            addDebugLog(`Quality Mode: AI rewrite complete(est.${currentDiagnostic.tokenCount} tokens)`);
+            addDebugLog(`Quality Mode: AI rewrite complete in ${rewriteDuration}s (est.${currentDiagnostic.tokenCount} tokens)`);
         } else {
             addDebugLog('Quality Mode: No violations detected');
         }
     }
 
     // Update diagnostic state with final result
-    currentDiagnostic.rewrittenText = currentText;
-
-    // Update message if modified
-    // Update diagnostics
     currentDiagnostic.rewrittenText = currentText;
 
     // If something changed, either show diff or auto-apply
@@ -833,6 +896,13 @@ async function processMessage(messageId) {
             const context = getContext();
             const message = context.chat[messageId];
             message.mes = currentText;
+
+            // Store rewrite duration in message metadata (if Quality Mode was used)
+            if (typeof rewriteDuration !== 'undefined') {
+                if (!message.extra) message.extra = {};
+                message.extra.prose_guardian_time = rewriteDuration;
+            }
+
             await saveChatConditional();
 
             // Mark as processed to prevent re-processing (FIX #2)
@@ -842,6 +912,11 @@ async function processMessage(messageId) {
             // Update the visual display using native SillyTavern function
             updateMessageBlock(parseInt(messageId), message);
 
+            // Add visual time badge if rewrite duration exists
+            if (typeof rewriteDuration !== 'undefined') {
+                addTimeBadge(messageId, rewriteDuration);
+            }
+
             addDebugLog('Message updated successfully');
             showNotification('Message fixed successfully', 'success');
         } catch (error) {
@@ -849,16 +924,11 @@ async function processMessage(messageId) {
             addDebugLog(`Error updating message: ${error.message} `);
             showNotification('Error updating message', 'error');
         }
-
-        // Hide processing overlay
-        hideProcessingOverlay(messageId);
-
-        addDebugLog('Message updated successfully');
     } else {
         addDebugLog('No modifications needed');
 
         // Remove masking class even if no changes were made
-        const $message = $(`#chat .mes[mesid="${messageId}"]`);
+        const $message = getMessageElement(messageId);
         $message.find('.mes_text').removeClass('asf-processing-text asf-skeleton-pulse');
     }
 
@@ -867,6 +937,56 @@ async function processMessage(messageId) {
 
     // Update diagnostics panel if visible
     updateDiagnosticsPanel();
+}
+
+// Add visual time badge to message
+function addTimeBadge(messageId, duration) {
+    const $message = getMessageElement(messageId);
+    if ($message.length === 0) return;
+
+    // Remove existing badge if present
+    $message.find('.prose-guardian-time-badge').remove();
+
+    // Create badge HTML
+    const $badge = $(`
+        <div class="prose-guardian-time-badge" style="
+            display: inline-block;
+            font-size: 11px;
+            padding: 2px 6px;
+            margin-left: 5px;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(33, 150, 243, 0.15));
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 10px;
+            color: rgba(76, 175, 80, 0.9);
+            font-weight: 500;
+            vertical-align: middle;
+            white-space: nowrap;
+        " title="AI rewrite completed in ${duration} seconds">
+            <i class="fa-solid fa-bolt" style="font-size: 10px; margin-right: 3px;"></i>${duration}s
+        </div>
+    `);
+
+    // Add badge to message extras or metadata area
+    let $target = $message.find('.mesExtraInfo');
+    if ($target.length === 0) {
+        $target = $message.find('.mes_text');
+    }
+
+    if ($target.length > 0) {
+        $target.append($badge);
+    }
+}
+
+// Restore time badges for existing messages (on page load)
+function restoreTimeBadges() {
+    const context = getContext();
+    if (!context || !context.chat) return;
+
+    context.chat.forEach((message, index) => {
+        if (message && !message.is_user && message.extra && message.extra.prose_guardian_time) {
+            addTimeBadge(index, message.extra.prose_guardian_time);
+        }
+    });
 }
 
 // -----------------------------------------------------------------------------
@@ -895,16 +1015,13 @@ function addRefinementButtons() {
  * @param {number} messageId - The message ID
  */
 async function addRefinementButtonToMessage(messageId) {
-    const context = getContext();
-    if (!context || !context.chat) return;
-
-    const message = context.chat[messageId];
-    if (!message || message.is_user || message.is_system) return;
+    const message = getAIMessage(messageId);
+    if (!message) return;
 
     // Small delay to ensure DOM is ready
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    const $messageElement = $(`#chat.mes[mesid = "${messageId}"]`);
+    const $messageElement = getMessageElement(messageId);
     if ($messageElement.length) {
         addRefinementButtonToElement($messageElement, messageId);
         addGuidedSwipeButtonToElement($messageElement, messageId);
@@ -1172,9 +1289,6 @@ function addGuidedResponseButton() {
     addDebugLog('Guided Response button added to chat input');
 }
 
-// Settings management
-// loadSettings removed (duplicate)
-
 // Update diagnostics panel in settings
 function updateDiagnosticsPanel() {
     // Only update if settings panel exists and is visible
@@ -1226,7 +1340,6 @@ function updateHistoryDropdown() {
     $select.val('0');
 }
 
-// applySettingsToUI removed (duplicate)
 
 function bindSettingsHandlers() {
     $('#asf_fast_mode').on('change', function () {
@@ -1364,21 +1477,7 @@ function bindSettingsHandlers() {
             return;
         }
 
-        // Get current timestamp for filename
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-        const filename = `ai-slopfixer-debug-${timestamp}.txt`;
-
-        // Create blob and download
-        const blob = new Blob([logText], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
+        const filename = exportToFile(logText, 'ai-slopfixer-debug');
         showNotification(`Exported as ${filename}`, 'success');
     });
 
@@ -1411,21 +1510,7 @@ function bindSettingsHandlers() {
             exportText += `\n${'-'.repeat(80)}\n`;
         });
 
-        // Get current timestamp for filename
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-        const filename = `ai-slopfixer-history-${timestamp}.txt`;
-
-        // Create blob and download
-        const blob = new Blob([exportText], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
+        const filename = exportToFile(exportText, 'ai-slopfixer-history');
         showNotification(`Exported ${diagnosticsHistory.length} runs as ${filename}`, 'success');
     });
 
@@ -1544,16 +1629,7 @@ function bindSettingsHandlers() {
         }
 
         const text = settings.customBlockedPhrases.map(p => p.phrase).join('\n');
-        const blob = new Blob([text], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `prose-guardian-blocked-phrases-${Date.now()}.txt`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
+        const filename = exportToFile(text, 'prose-guardian-blocked-phrases');
         showNotification(`Exported ${settings.customBlockedPhrases.length} phrases`, 'success');
         console.log(`${LOG_PREFIX} Exported ${settings.customBlockedPhrases.length} custom phrases`);
     });
@@ -2334,6 +2410,7 @@ jQuery(async () => {
         // Add buttons to existing messages after a small delay
         setTimeout(() => {
             addRefinementButtons();
+            restoreTimeBadges(); // Show time badges for already-processed messages
         }, 500);
     });
 
