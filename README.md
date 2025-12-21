@@ -1,3 +1,6 @@
+Work in progress, it might not work well
+
+MADE USING GOOGLE ANTIGRAVITY BASED ON POPULAR MEMORY EXTENSIONS FOR PERSONAL USE
 # 🛡️ Prose Guardian
 
 **Proactive AI Writing Enhancement for SillyTavern**
